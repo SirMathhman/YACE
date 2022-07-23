@@ -4,10 +4,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.time.Duration;
@@ -24,7 +21,7 @@ public class ApplicationTest {
 
     @Test
     void requests_input() {
-        var future = CompletableFuture.runAsync(() -> run(""));
+        var future = CompletableFuture.runAsync(() -> new Application(currentWorkingDirectory, InputStream.nullInputStream()).run());
         assertThrows(TimeoutException.class, () -> {
             try {
                 future.get(10, TimeUnit.MILLISECONDS);
@@ -68,52 +65,28 @@ public class ApplicationTest {
 
     @Test
     void deleteExists() throws IOException {
-        var child = currentWorkingDirectory.resolve("Test.java");
-        Files.createFile(child);
-
+        var child = createTempFile("Test.java");
         runImpl("delete(\"Test.java\")");
         assertFalse(Files.exists(child));
     }
 
+    private Path createTempFile(String other) throws IOException {
+        var child = currentWorkingDirectory.resolve(other);
+        Files.createFile(child);
+        return child;
+    }
+
     @Test
     void deleteAnother() throws IOException {
-        var child = currentWorkingDirectory.resolve("Test1.java");
-        Files.createFile(child);
-
+        var child = createTempFile("Test1.java");
         runImpl("delete(\"Test1.java\")");
         assertFalse(Files.exists(child));
     }
 
     private void runImpl(String... list) {
-        run(list.length == 0
+        new Application(currentWorkingDirectory, new ByteArrayInputStream((list.length == 0
                 ? "exit"
-                : String.join("\n", list) + "\nexit", currentWorkingDirectory);
+                : String.join("\n", list) + "\nexit").getBytes())).run();
     }
 
-    private void run(String input) {
-        run(input, Paths.get("."));
-    }
-
-    private void run(String input, Path working) {
-        try (var reader = new BufferedReader(new InputStreamReader(new ByteArrayInputStream(input.getBytes())))) {
-            while (true) {
-                var line = reader.readLine();
-                if (line == null) continue;
-                if (line.equals("exit")) return;
-                if (line.startsWith("delete(\"")) {
-                    var slice = line.substring("delete(\"".length());
-                    var separator = slice.indexOf('\"');
-                    var name = slice.substring(0, separator);
-                    var child = working.resolve(name);
-                    try {
-                        Files.delete(child);
-                    } catch (IOException e) {
-                        throw new OperationException(String.format("The child at '%s' did not exist.", child));
-                    }
-                }
-            }
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
 }
