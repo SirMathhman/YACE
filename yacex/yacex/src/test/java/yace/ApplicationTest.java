@@ -4,8 +4,13 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.io.*;
-import java.nio.file.*;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.FileVisitResult;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.time.Duration;
 import java.util.concurrent.CompletableFuture;
@@ -83,10 +88,36 @@ public class ApplicationTest {
         assertFalse(Files.exists(child));
     }
 
+    @Test
+    void create() throws IOException {
+        createTest("Test.java");
+    }
+
+    @Test
+    void create_content() throws IOException {
+        assertEquals("class Test {\n}", createTest("Test.java"));
+    }
+
+    @Test
+    void create_another() throws IOException {
+        createTest("Test1.java");
+    }
+
+    @Test
+    void create_another_content() throws IOException {
+        assertEquals("class Test1 {\n}", createTest("Test1.java"));
+    }
+
+    private String createTest(String name) throws IOException {
+        runImpl("create(\"" + name + "\")");
+        var child = currentWorkingDirectory.resolve(name);
+        assertTrue(Files.exists(child));
+        return Files.readString(child);
+    }
+
     private void runImpl(String... list) {
         new Application(currentWorkingDirectory, new ByteArrayInputStream((list.length == 0
                 ? "exit"
                 : String.join("\n", list) + "\nexit").getBytes())).run();
     }
-
 }

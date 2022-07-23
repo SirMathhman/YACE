@@ -6,14 +6,13 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 
 public class Application {
-    private final Path working;
+    private final Path currentWorkingDirectory;
     private final InputStream input;
 
-    public Application(Path working, InputStream input) {
-        this.working = working;
+    public Application(Path currentWorkingDirectory, InputStream input) {
+        this.currentWorkingDirectory = currentWorkingDirectory;
         this.input = input;
     }
 
@@ -23,11 +22,21 @@ public class Application {
                 var line = reader.readLine();
                 if (line == null) continue;
                 if (line.equals("exit")) return;
+                if(line.startsWith("create(\"")) {
+                    var slice = line.substring("create(\"".length());
+                    var nameEnd = slice.indexOf('\"');
+                    var name = slice.substring(0, nameEnd);
+                    var separator = name.indexOf('.');
+                    var nameWithoutExtension = name.substring(0, separator);
+                    var output = "class " + nameWithoutExtension + " {\n}";
+
+                    Files.writeString(currentWorkingDirectory.resolve(name), output);
+                }
                 if (line.startsWith("delete(\"")) {
                     var slice = line.substring("delete(\"".length());
                     var separator = slice.indexOf('\"');
                     var name = slice.substring(0, separator);
-                    var child = working.resolve(name);
+                    var child = currentWorkingDirectory.resolve(name);
                     try {
                         Files.delete(child);
                     } catch (IOException e) {
