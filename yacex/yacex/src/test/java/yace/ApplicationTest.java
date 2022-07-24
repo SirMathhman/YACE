@@ -18,18 +18,31 @@ import java.util.concurrent.TimeoutException;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class ApplicationTest {
-    public static Path TestFile;
-    public static Path TestAnotherFile;
     private static Path TempDirectory;
-    private final String PrimaryTestName = "Test";
-    private final String SecondaryTestName = "Test1";
-    private final String CreateSource = "Sources.create";
+
+    private static final String PrimaryName = "Test";
+
+    private static final String SecondaryName = "AnotherTest";
+
+    private final String PackageCreate = invokeCreate("Packages");
+
+    private final String SourcesCreate = invokeCreate("Sources");
+    private Path PrimaryPath;
+    private Path SecondaryPath;
+    private final String PlatformExtension = "java";
+    private Path PrimaryDirectory;
+
+    private String invokeCreate(String name) {
+        return name + ".create";
+    }
 
     @BeforeEach
     void setUp() throws IOException {
         TempDirectory = Files.createTempDirectory("test");
-        TestFile = TempDirectory.resolve("Test.java");
-        TestAnotherFile = TempDirectory.resolve("Test1.java");
+        PrimaryPath = TempDirectory.resolve(PrimaryName + "." + PlatformExtension);
+
+        SecondaryPath = TempDirectory.resolve(SecondaryName + "." + PlatformExtension);
+        PrimaryDirectory = TempDirectory.resolve(PrimaryName);
     }
 
     @AfterEach
@@ -55,26 +68,53 @@ public class ApplicationTest {
         assertThrows(TimeoutException.class, () -> future.get(10, TimeUnit.MILLISECONDS));
     }
 
-    @Test
-    void file_create() {
-        create(PrimaryTestName);
-        assertTrue(Files.exists(TestFile));
+    private void createSource(String name) {
+        create(SourcesCreate, name);
     }
 
-    private void create(String name) {
-        runWithString(CreateSource + "(\"" + name + "\")");
+    private void create(String caller, String name) {
+        runWithString(caller + "(\"" + name + "\")");
     }
+
+    @Test
+    void package_create() {
+        createPackage(PrimaryName);
+        assertTrue(Files.exists(PrimaryDirectory));
+    }
+
+    @Test
+    void package_create_directory() {
+        createPackage(PrimaryName);
+        assertTrue(Files.isDirectory(PrimaryDirectory));
+    }
+
+    @Test
+    void file_create() {
+        createSource(PrimaryName);
+        assertTrue(Files.exists(PrimaryPath));
+    }
+
+    @Test
+    void package_create_another() {
+        createPackage(SecondaryName);
+        assertTrue(Files.exists(TempDirectory.resolve(SecondaryName)));
+    }
+
+    private void createPackage(String name) {
+        create(PackageCreate, name);
+    }
+
 
     @Test
     void file_create_another() {
-        create(SecondaryTestName);
-        assertTrue(Files.exists(TestAnotherFile));
+        createSource(SecondaryName);
+        assertTrue(Files.exists(SecondaryPath));
     }
 
     @Test
     void file_create_content() throws IOException {
-        create(PrimaryTestName);
-        assertEquals(renderClass(PrimaryTestName), Files.readString(TestFile));
+        createSource(PrimaryName);
+        assertEquals(renderClass(PrimaryName), Files.readString(PrimaryPath));
     }
 
     private String renderClass(String name) {
@@ -83,19 +123,13 @@ public class ApplicationTest {
 
     @Test
     void file_create_content_another() throws IOException {
-        create(SecondaryTestName);
-        assertEquals(renderClass(SecondaryTestName), Files.readString(TestAnotherFile));
+        createSource(SecondaryName);
+        assertEquals(renderClass(SecondaryName), Files.readString(SecondaryPath));
     }
 
     @Test
     void exit() {
         assertTimeoutPreemptively(Duration.ofSeconds(1), () -> runWithString());
-    }
-
-    @Test
-    void package_create() {
-        runWithString("Packages.create(\"Test\"))");
-
     }
 
     private void runWithString(String... args) {
@@ -112,16 +146,34 @@ public class ApplicationTest {
             while (true) {
                 var line = reader.readLine();
                 if (line == null) continue;
-                if (line.equals("exit")) return;
-                if (line.startsWith(CreateSource + "(\"")) {
-                    var slice = line.substring((CreateSource + "(\"").length());
-                    var nameEnd = slice.indexOf('\"');
-                    var name = slice.substring(0, nameEnd);
-                    Files.writeString(TempDirectory.resolve(name + ".java"), renderClass(name));
-                }
+                if (execute(line)) return;
             }
         } catch (IOException e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    private boolean execute(String line) throws IOException {
+        if (line.equals("exit")) return true;
+        else if (line.contains("(") && line.endsWith(")")) {
+            var argStart = line.indexOf("(");
+            var caller = line.substring(0, argStart);
+            var argEnd = line.length() - 1;
+
+            var argString = line.substring(argStart + 1, argEnd).strip();
+            var name = argString.substring(1, argString.length() - 1);
+
+            if (caller.equals(SourcesCreate)) {
+                Files.writeString(TempDirectory.resolve(name + "." + PlatformExtension), renderClass(name));
+                return false;
+            } else if (caller.equals(PackageCreate)) {
+                Files.createDirectory(TempDirectory.resolve(name));
+                return false;
+            } else {
+                throw new IllegalArgumentException("Invalid caller: " + caller);
+            }
+        } else {
+            throw new IllegalArgumentException("Invalid line: " + line);
         }
     }
 }
