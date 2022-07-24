@@ -14,11 +14,13 @@
       1) Constant
    3) Parameter
       1) Functional
+      2) Delegate Through Overload
    4) Method
 2) Inline
 
 # Refactorings
-1) Move file in package
+1) File - Instantiatable
+   2) Move package
 2) Import
    1) Find Usages
    2) Remove Duplicates
