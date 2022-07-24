@@ -1,11 +1,11 @@
 *C/D - Create and Delete
 
-2) Move file in package
-3) Class - C/D
+1) Move file in package
+2) Class - C/D
     1) Change visibility
     2) Change name
-4) Annotation - C/D
-5) Function - C/D
+3) Annotation - C/D
+4) Function - C/D
     1) Annotations - C/D
     2) Return Type
        1) Remove type
