@@ -1,12 +1,15 @@
 package yace;
 
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.*;
+import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.nio.file.SimpleFileVisitor;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.time.Duration;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
@@ -15,12 +18,36 @@ import java.util.concurrent.TimeoutException;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class ApplicationTest {
-
-    public static final Path TestFile = Paths.get(".", "Test.java");
-    public static final Path TestAnotherFile = Paths.get(".", "Test1.java");
+    public static Path TestFile;
+    public static Path TestAnotherFile;
+    private static Path TempDirectory;
     private final String PrimaryTestName = "Test";
     private final String SecondaryTestName = "Test1";
     private final String CreateSource = "Sources.create";
+
+    @BeforeEach
+    void setUp() throws IOException {
+        TempDirectory = Files.createTempDirectory("test");
+        TestFile = TempDirectory.resolve("Test.java");
+        TestAnotherFile = TempDirectory.resolve("Test1.java");
+    }
+
+    @AfterEach
+    void tearDown() throws IOException {
+        Files.walkFileTree(TempDirectory, new SimpleFileVisitor<>() {
+            @Override
+            public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
+                Files.deleteIfExists(dir);
+                return FileVisitResult.CONTINUE;
+            }
+
+            @Override
+            public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+                Files.deleteIfExists(file);
+                return FileVisitResult.CONTINUE;
+            }
+        });
+    }
 
     @Test
     void blocks() {
@@ -44,12 +71,6 @@ public class ApplicationTest {
         assertTrue(Files.exists(TestAnotherFile));
     }
 
-    @AfterEach
-    void tearDown() throws IOException {
-        Files.deleteIfExists(TestFile);
-        Files.deleteIfExists(TestAnotherFile);
-    }
-
     @Test
     void file_create_content() throws IOException {
         create(PrimaryTestName);
@@ -71,6 +92,12 @@ public class ApplicationTest {
         assertTimeoutPreemptively(Duration.ofSeconds(1), () -> runWithString());
     }
 
+    @Test
+    void package_create() {
+        runWithString("Packages.create(\"Test\"))");
+
+    }
+
     private void runWithString(String... args) {
         var input = args.length == 0 ? "exit" : String.join("\n", args) + "\nexit";
         run(new ByteArrayInputStream(input.getBytes()));
@@ -90,7 +117,7 @@ public class ApplicationTest {
                     var slice = line.substring((CreateSource + "(\"").length());
                     var nameEnd = slice.indexOf('\"');
                     var name = slice.substring(0, nameEnd);
-                    Files.writeString(Paths.get(".", name + ".java"), renderClass(name));
+                    Files.writeString(TempDirectory.resolve(name + ".java"), renderClass(name));
                 }
             }
         } catch (IOException e) {
