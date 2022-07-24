@@ -40,6 +40,7 @@ public class ApplicationTest {
     @AfterEach
     void tearDown() throws IOException {
         Files.deleteIfExists(TestFile);
+        Files.deleteIfExists(TestAnotherFile);
     }
 
     @Test
