@@ -1,8 +1,15 @@
-1) As File
-   1) Create
-   2) Read All
-   3) Delete
-2) As Code
-   1) Move packages
-   2) Change visibility
-   3) Change name
+*C/D - Create and Delete
+
+2) Move file in package
+3) Class - C/D
+    1) Change visibility
+    2) Change name
+4) Annotation - C/D
+5) Function - C/D
+    1) Annotations - C/D
+    2) Return Type
+       1) Remove type
+       2) Delegate type
+       3) Wrap in Class
+    3) Rename
+    4) Inline
