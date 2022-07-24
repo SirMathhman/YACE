@@ -18,6 +18,9 @@ public class ApplicationTest {
 
     public static final Path TestFile = Paths.get(".", "Test.java");
     public static final Path TestAnotherFile = Paths.get(".", "Test1.java");
+    private final String PrimaryTestName = "Test";
+    private final String SecondaryTestName = "Test1";
+    private final String CreateSource = "Sources.create";
 
     @Test
     void blocks() {
@@ -27,13 +30,17 @@ public class ApplicationTest {
 
     @Test
     void file_create() {
-        runWithString("create(\"Test\")");
+        create(PrimaryTestName);
         assertTrue(Files.exists(TestFile));
+    }
+
+    private void create(String name) {
+        runWithString(CreateSource + "(\"" + name + "\")");
     }
 
     @Test
     void file_create_another() {
-        runWithString("create(\"Test1\")");
+        create(SecondaryTestName);
         assertTrue(Files.exists(TestAnotherFile));
     }
 
@@ -45,14 +52,18 @@ public class ApplicationTest {
 
     @Test
     void file_create_content() throws IOException {
-        runWithString("create(\"Test\"");
-        assertEquals("class Test {\n}", Files.readString(TestFile));
+        create(PrimaryTestName);
+        assertEquals(renderClass(PrimaryTestName), Files.readString(TestFile));
+    }
+
+    private String renderClass(String name) {
+        return "class " + name + " {\n}";
     }
 
     @Test
     void file_create_content_another() throws IOException {
-        runWithString("create(\"Test1\"");
-        assertEquals("class Test1 {\n}", Files.readString(TestAnotherFile));
+        create(SecondaryTestName);
+        assertEquals(renderClass(SecondaryTestName), Files.readString(TestAnotherFile));
     }
 
     @Test
@@ -75,11 +86,11 @@ public class ApplicationTest {
                 var line = reader.readLine();
                 if (line == null) continue;
                 if (line.equals("exit")) return;
-                if(line.startsWith("create(\"")) {
-                    var slice = line.substring("create(\"".length());
+                if (line.startsWith(CreateSource + "(\"")) {
+                    var slice = line.substring((CreateSource + "(\"").length());
                     var nameEnd = slice.indexOf('\"');
                     var name = slice.substring(0, nameEnd);
-                    Files.writeString(Paths.get(".", name + ".java"), "class " + name + " {\n}");
+                    Files.writeString(Paths.get(".", name + ".java"), renderClass(name));
                 }
             }
         } catch (IOException e) {
