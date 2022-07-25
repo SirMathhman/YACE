@@ -14,36 +14,36 @@ import java.nio.file.attribute.BasicFileAttributes;
 public class IntegrationTest {
     protected static final String PrimaryName = "Test";
     protected static final String SecondaryName = "AnotherTest";
-    protected static Path TempDirectory;
+    protected static Path WorkingDirectory;
     protected Path PrimaryPath;
     protected Path SecondaryPath;
     protected Path PrimaryDirectory;
 
     protected static void runWithString(String... args) {
         var input = args.length == 0 ? "exit" : String.join("\n", args) + "\nexit";
-        new Application(new ByteArrayInputStream(input.getBytes()), TempDirectory).run();
+        new Application(new ByteArrayInputStream(input.getBytes()), WorkingDirectory).run();
     }
 
-    protected static void create(String caller, String name) {
-        runWithString(caller + "(\"" + name + "\")");
+    protected static void invoke(String caller, String... args) {
+        runWithString(caller + "(\"" + String.join(",", args) + "\")");
     }
 
-    protected static void createPackage(String name) {
-        IntegrationTest.create(Executor.CreatePackage, name);
+    protected static void createPackage(String... args) {
+        IntegrationTest.invoke(Executor.CreatePackage, args);
     }
 
     @BeforeEach
     void setUp() throws IOException {
-        TempDirectory = Files.createTempDirectory("test");
-        PrimaryPath = TempDirectory.resolve(PrimaryName + "." + Executor.PlatformExtension);
+        WorkingDirectory = Files.createTempDirectory("test");
+        PrimaryPath = WorkingDirectory.resolve(PrimaryName + "." + Executor.PlatformExtension);
 
-        SecondaryPath = TempDirectory.resolve(SecondaryName + "." + Executor.PlatformExtension);
-        PrimaryDirectory = TempDirectory.resolve(PrimaryName);
+        SecondaryPath = WorkingDirectory.resolve(SecondaryName + "." + Executor.PlatformExtension);
+        PrimaryDirectory = WorkingDirectory.resolve(PrimaryName);
     }
 
     @AfterEach
     void tearDown() throws IOException {
-        Files.walkFileTree(TempDirectory, new SimpleFileVisitor<>() {
+        Files.walkFileTree(WorkingDirectory, new SimpleFileVisitor<>() {
             @Override
             public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
                 Files.deleteIfExists(dir);

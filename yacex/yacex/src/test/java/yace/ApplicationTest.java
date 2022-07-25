@@ -3,7 +3,6 @@ package yace;
 import org.junit.jupiter.api.Test;
 
 import java.io.*;
-import java.nio.file.Files;
 import java.time.Duration;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
@@ -25,6 +24,6 @@ public class ApplicationTest extends IntegrationTest {
     }
 
     private static void run() {
-        new Application(InputStream.nullInputStream(), TempDirectory).run();
+        new Application(InputStream.nullInputStream(), WorkingDirectory).run();
     }
 }

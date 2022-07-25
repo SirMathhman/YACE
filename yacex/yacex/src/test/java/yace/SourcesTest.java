@@ -10,7 +10,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class SourcesTest extends IntegrationTest {
     private static void createSource(String name) {
-        create(Executor.CreateSource, name);
+        invoke(Executor.CreateSource, name);
     }
 
     @Test

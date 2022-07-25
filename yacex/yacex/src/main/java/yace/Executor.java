@@ -3,6 +3,7 @@ package yace;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 
 public class Executor {
     public static final String CreatePackage = invokeCreate("Packages");
@@ -34,7 +35,12 @@ public class Executor {
                 Files.writeString(workingDirectory.resolve(name + "." + PlatformExtension), new ClassRenderer(name).renderClass());
                 return false;
             } else if (caller.equals(CreatePackage)) {
-                Files.createDirectory(workingDirectory.resolve(name));
+                var args = name.split(",");
+                var current = workingDirectory;
+                for (String arg : args) {
+                    current = current.resolve(arg);
+                }
+                Files.createDirectories(current);
                 return false;
             } else {
                 throw new IllegalArgumentException("Invalid caller: " + caller);
