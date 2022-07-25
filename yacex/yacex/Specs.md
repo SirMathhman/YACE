@@ -25,7 +25,7 @@
 3) Inline
 
 # Refactorings
-1) Package - Instantiatable, Named
+1) Package - ✓ Instantiatable, Named
    1) Compose
    2) Decompose
 2) File - Instantiatable
@@ -45,6 +45,7 @@
    1) Annotations - Instantiatable, Named
    2) Modifier
       1) Make final
+      2) Make static
    3) Type - Named
       1) Replace with implicit
       2) Replace with explicit
