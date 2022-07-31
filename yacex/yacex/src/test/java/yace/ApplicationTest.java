@@ -4,6 +4,8 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import java.awt.*;
 import java.io.IOException;
@@ -39,9 +41,10 @@ public class ApplicationTest {
         });
     }
 
-    @Test
-    void package_create() throws IOException {
-        Files.createDirectories(working.resolve("source"));
-        Assertions.assertTrue(Files.exists(working.resolve("source")));
+    @ParameterizedTest
+    @ValueSource(strings = {"first", "second"})
+    void package_create(String name) throws IOException {
+        Files.createDirectories(working.resolve(name));
+        Assertions.assertTrue(Files.exists(working.resolve(name)));
     }
 }
