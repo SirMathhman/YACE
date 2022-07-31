@@ -1,2 +1,5 @@
-1) Empty File Produces Class
-2) 
+# Attributes
+1) CRUD - Create, Read, Update, Delete
+
+# Definitions
+1) Packages - CRUD

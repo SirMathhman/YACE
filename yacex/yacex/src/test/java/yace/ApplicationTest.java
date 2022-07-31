@@ -1,37 +1,47 @@
 package yace;
 
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.awt.*;
 import java.io.IOException;
+import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import java.nio.file.SimpleFileVisitor;
+import java.nio.file.attribute.BasicFileAttributes;
 
 public class ApplicationTest {
-    private final String className = "Target";
-    private Path Target;
+
+    private Path working;
 
     @BeforeEach
     void setUp() throws IOException {
-        Target = Files.createTempFile(className, ".java");
+        working = Files.createTempDirectory("working");
     }
 
     @AfterEach
     void tearDown() throws IOException {
-        Files.deleteIfExists(Target);
+        Files.walkFileTree(working, new SimpleFileVisitor<>() {
+            @Override
+            public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+                Files.deleteIfExists(file);
+                return FileVisitResult.CONTINUE;
+            }
+
+            @Override
+            public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
+                Files.deleteIfExists(dir);
+                return FileVisitResult.CONTINUE;
+            }
+        });
     }
 
     @Test
-    void test() throws IOException {
-        var expected = renderClass();
-        Files.writeString(Target, expected);
-        assertEquals(expected, Files.readString(Target));
-    }
-
-    private String renderClass() {
-        return "class " + className + " {\n}";
+    void package_create() throws IOException {
+        Files.createDirectories(working.resolve("source"));
+        Assertions.assertTrue(Files.exists(working.resolve("source")));
     }
 }
