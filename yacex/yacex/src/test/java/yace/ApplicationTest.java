@@ -44,19 +44,38 @@ public class ApplicationTest {
     @ValueSource(strings = {"first", "second"})
     void package_create(String name) throws IOException {
         createPackage(name);
+        assertPackageCreated(name);
+    }
+
+    private void assertPackageCreated(String name) {
         Assertions.assertTrue(Files.exists(working.resolve(name)));
     }
 
+    @Test
+    void package_create_pad_name_left() throws IOException {
+        createPackageWithNamePadding("test", 1, 0);
+        assertPackageCreated("test");
+    }
+
+    @Test
+    void package_create_pad_name_right() throws IOException {
+        createPackageWithNamePadding("test", 0, 1);
+        assertPackageCreated("test");
+    }
+
     private void createPackage(String input) throws IOException {
-        run("createSource(\"" + input + "\")");
+        createPackageWithNamePadding(input, 0, 0);
+    }
+
+    private void createPackageWithNamePadding(String input, int leftNamePad, int rightNamePad) throws IOException {
+        run(" ".repeat(leftNamePad) + "createSource" + " ".repeat(rightNamePad) + "(\"" + input + "\")");
     }
 
     private void run(String temp) throws IOException {
-        var prefix = "createSource(\"";
-        if (temp.startsWith(prefix)) {
-            var start = prefix.length();
-            var end = temp.indexOf('\"', prefix.length());
-            var name = temp.substring(start, end);
+        if (temp.contains("createSource")) {
+            var start = temp.indexOf('\"');
+            var end = temp.indexOf('\"', start + 1);
+            var name = temp.substring(start + 1, end);
             Files.createDirectories(working.resolve(name));
         } else {
             throw new IllegalArgumentException("Invalid input: " + temp);
