@@ -7,7 +7,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
-import java.awt.*;
 import java.io.IOException;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
@@ -44,7 +43,28 @@ public class ApplicationTest {
     @ParameterizedTest
     @ValueSource(strings = {"first", "second"})
     void package_create(String name) throws IOException {
-        Files.createDirectories(working.resolve(name));
+        createPackage(name);
         Assertions.assertTrue(Files.exists(working.resolve(name)));
+    }
+
+    private void createPackage(String input) throws IOException {
+        run("createSource(\"" + input + "\")");
+    }
+
+    private void run(String temp) throws IOException {
+        var prefix = "createSource(\"";
+        if (temp.startsWith(prefix)) {
+            var start = prefix.length();
+            var end = temp.indexOf('\"', prefix.length());
+            var name = temp.substring(start, end);
+            Files.createDirectories(working.resolve(name));
+        } else {
+            throw new IllegalArgumentException("Invalid input: " + temp);
+        }
+    }
+
+    @Test
+    void unknown() {
+        Assertions.assertThrows(IllegalArgumentException.class, () -> run(""));
     }
 }
