@@ -43,7 +43,7 @@ public class ApplicationTest {
     @ParameterizedTest
     @ValueSource(strings = {"first", "second"})
     void package_create(String name) throws IOException {
-        createPackage(name);
+        run(new CreatePackage(name).render());
         assertPackageCreated(name);
     }
 
@@ -53,32 +53,52 @@ public class ApplicationTest {
 
     @Test
     void package_create_pad_name_left() throws IOException {
-        createPackageWithNamePadding("test", 1, 0);
+        var value = new CreatePackage("test");
+        value.leftNamePad = 1;
+        run(value.render());
         assertPackageCreated("test");
     }
 
     @Test
     void package_create_pad_name_right() throws IOException {
-        createPackageWithNamePadding("test", 0, 1);
+        var value = new CreatePackage("test");
+        value.rightNamePad = 1;
+        run(value.render());
         assertPackageCreated("test");
     }
 
-    private void createPackage(String input) throws IOException {
-        createPackageWithNamePadding(input, 0, 0);
+    @Test
+    void package_create_without_opening_parentheses() {
+        var value = new CreatePackage("test");
+        value.toggleOpenParentheses();
+        assertSyntaxFail(value);
     }
 
-    private void createPackageWithNamePadding(String input, int leftNamePad, int rightNamePad) throws IOException {
-        run(" ".repeat(leftNamePad) + "createSource" + " ".repeat(rightNamePad) + "(\"" + input + "\")");
+    private void assertSyntaxFail(CreatePackage value) {
+        Assertions.assertThrows(SyntaxException.class, () -> run(value.render()));
     }
 
-    private void run(String temp) throws IOException {
-        if (temp.contains("createSource")) {
-            var start = temp.indexOf('\"');
-            var end = temp.indexOf('\"', start + 1);
-            var name = temp.substring(start + 1, end);
+    @Test
+    void package_create_without_ending_parentheses() {
+        var value = new CreatePackage("test");
+        value.toggleClosingParentheses();
+        assertSyntaxFail(value);
+    }
+
+    private void run(String input) throws IOException {
+        var prefix = "createSource";
+        if (input.contains(prefix)) {
+            var prefixIndex = input.indexOf(prefix);
+            var value = input.substring(prefixIndex + prefix.length()).strip();
+            if(value.indexOf('(') == -1) throw new SyntaxException("Cannot find opening parentheses", input);
+            if(value.indexOf(')') == -1) throw new SyntaxException("Cannot find closing parentheses", input);
+
+            var start = input.indexOf('\"');
+            var end = input.indexOf('\"', start + 1);
+            var name = input.substring(start + 1, end);
             Files.createDirectories(working.resolve(name));
         } else {
-            throw new IllegalArgumentException("Invalid input: " + temp);
+            throw new IllegalArgumentException("Invalid input: " + input);
         }
     }
 
