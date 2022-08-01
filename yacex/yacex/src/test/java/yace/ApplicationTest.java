@@ -43,7 +43,7 @@ public class ApplicationTest {
     @ParameterizedTest
     @ValueSource(strings = {"first", "second"})
     void package_create(String name) throws IOException {
-        run(new CreatePackage(name).render());
+        run(new CreatePackage(new Quantity("\"" + name + "\"")).render());
         assertPackageCreated(name);
     }
 
@@ -53,7 +53,7 @@ public class ApplicationTest {
 
     @Test
     void package_create_pad_name_left() throws IOException {
-        var value = new CreatePackage("test");
+        var value = new CreatePackage(new Quantity("\"" + "test" + "\""));
         value.leftNamePad = 1;
         run(value.render());
         assertPackageCreated("test");
@@ -61,7 +61,7 @@ public class ApplicationTest {
 
     @Test
     void package_create_pad_name_right() throws IOException {
-        var value = new CreatePackage("test");
+        var value = new CreatePackage(new Quantity("\"" + "test" + "\""));
         value.rightNamePad = 1;
         run(value.render());
         assertPackageCreated("test");
@@ -69,19 +69,24 @@ public class ApplicationTest {
 
     @Test
     void package_create_without_opening_parentheses() {
-        var value = new CreatePackage("test");
-        value.toggleOpenParentheses();
+        var value = new CreatePackage(new Quantity("\"" + "test" + "\""));
+        value.quantity.toggleOpenParentheses();
         assertSyntaxFail(value);
     }
 
-    private void assertSyntaxFail(CreatePackage value) {
+    @Test
+    void package_create_without_opening_string() {
+
+    }
+
+    private void assertSyntaxFail(Node value) {
         Assertions.assertThrows(SyntaxException.class, () -> run(value.render()));
     }
 
     @Test
     void package_create_without_ending_parentheses() {
-        var value = new CreatePackage("test");
-        value.toggleClosingParentheses();
+        var value = new CreatePackage(new Quantity("\"" + "test" + "\""));
+        value.quantity.toggleClosingParentheses();
         assertSyntaxFail(value);
     }
 

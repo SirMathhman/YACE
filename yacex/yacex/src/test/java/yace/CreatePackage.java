@@ -1,27 +1,17 @@
 package yace;
 
-public class CreatePackage {
-    private final String name;
+public class CreatePackage implements Node {
     public int leftNamePad = 0;
     public int rightNamePad = 0;
-    public boolean hasOpen = true;
-    public boolean hasClose = true;
 
-    public CreatePackage(String name) {
-        this.name = name;
+    public Quantity quantity;
+
+    public CreatePackage(Quantity quantity) {
+        this.quantity = quantity;
     }
 
-    String render() {
-        var openParentheses = hasOpen ? "(" : "";
-        var closeParentheses = hasClose ? ")" : "";
-        return " ".repeat(leftNamePad) + "createSource" + " ".repeat(rightNamePad) + openParentheses + "\"" + name + "\"" + closeParentheses;
-    }
-
-    public void toggleOpenParentheses() {
-        hasOpen = !hasOpen;
-    }
-
-    public void toggleClosingParentheses() {
-        hasClose = !hasClose;
+    @Override
+    public String render() {
+        return " ".repeat(leftNamePad) + "createSource" + " ".repeat(rightNamePad) + this.quantity.render();
     }
 }
