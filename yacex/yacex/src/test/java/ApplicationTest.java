@@ -2,6 +2,8 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import java.io.IOException;
 import java.nio.file.FileVisitResult;
@@ -13,6 +15,7 @@ import java.util.Collections;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ApplicationTest {
@@ -69,15 +72,33 @@ public class ApplicationTest {
         assertMissing("First.java", "Second.java");
     }
 
-    @Test
-    void import_simple() throws IOException {
-        Files.writeString(working.resolve("Test.java"), "");
+    @ParameterizedTest
+    @ValueSource(strings = {"First", "Second"})
+    void import_simple(String name) throws IOException {
+        var expected = "import org.junit.jupiter.api.AfterEach";
+        var sourceName = name + ".java";
+        Files.writeString(working.resolve(sourceName), expected);
+        run(Set.of(sourceName));
+
+        var actual = Files.readString(working.resolve(name + ".mgs"));
+        assertEquals(expected, actual);
     }
 
     private void run(Set<String> files) {
-        files.forEach(file -> {
-            if (!Files.exists(working.resolve(file))) {
+        files.forEach(source -> {
+            var sourceFile = working.resolve(source);
+            if (!Files.exists(sourceFile)) {
                 throw new RuntimeException(new IOException());
+            }
+            var separator = source.indexOf('.');
+            try {
+                var nameWithoutExtension = source.substring(0, separator);
+                var targetName = nameWithoutExtension + ".mgs";
+                var target = working.resolve(targetName);
+                var output = Files.readString(sourceFile);
+                Files.writeString(target, output);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
             }
         });
     }
