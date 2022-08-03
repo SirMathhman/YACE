@@ -9,20 +9,24 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.util.Collections;
 import java.util.Set;
+import java.util.stream.Collectors;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ApplicationTest {
 
-    private Path directory;
+    private Path working;
 
     @BeforeEach
     void setUp() throws IOException {
-        directory = Files.createTempDirectory("working");
+        working = Files.createTempDirectory("working");
     }
 
     @AfterEach
     void tearDown() throws IOException {
-        Files.walkFileTree(directory, new SimpleFileVisitor<>() {
+        Files.walkFileTree(working, new SimpleFileVisitor<>() {
             @Override
             public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
                 Files.deleteIfExists(file);
@@ -38,8 +42,11 @@ public class ApplicationTest {
     }
 
     @Test
-    void nothing() {
-
+    void nothing() throws IOException {
+        run(Collections.emptySet());
+        try (var stream = Files.list(working)) {
+            assertTrue(stream.collect(Collectors.toSet()).isEmpty());
+        }
     }
 
     @Test
@@ -62,9 +69,14 @@ public class ApplicationTest {
         assertMissing("First.java", "Second.java");
     }
 
+    @Test
+    void import_simple() throws IOException {
+        Files.writeString(working.resolve("Test.java"), "");
+    }
+
     private void run(Set<String> files) {
         files.forEach(file -> {
-            if (!Files.exists(directory.resolve(file))) {
+            if (!Files.exists(working.resolve(file))) {
                 throw new RuntimeException(new IOException());
             }
         });
