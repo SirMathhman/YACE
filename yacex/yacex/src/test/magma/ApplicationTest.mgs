@@ -50,7 +50,6 @@ private def assertMissing(params files : String) => Assertions.assertThrows(IOEx
 @Test
 def missing_multiple => assertMissing("First.java", "Second.java")
 
-private void run(Set<String> files) files.forEach(file -> {
-    if !Files.exists(directory.resolve(file))
-        throw RuntimeException(IOException())
-})
+private def run(files : Set[String]) => files.forEach(
+    if !Files.exists(directory.resolve(_))
+    throw RuntimeException(IOException()))
