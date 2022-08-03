@@ -9,6 +9,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.util.Set;
 
 public class ApplicationTest {
 
@@ -43,14 +44,29 @@ public class ApplicationTest {
 
     @Test
     void missing() {
+        assertMissing("Empty.java");
+    }
+
+    private void assertMissing(String... files) {
         Assertions.assertThrows(IOException.class, () -> {
-            run("Empty.java");
+            try {
+                run(Set.of(files));
+            } catch (RuntimeException e) {
+                throw e.getCause();
+            }
         });
     }
 
-    private void run(String value) throws IOException {
-        if(!Files.exists(directory.resolve(value))) {
-            throw new IOException();
-        }
+    @Test
+    void missing_multiple() {
+        assertMissing("First.java", "Second.java");
+    }
+
+    private void run(Set<String> files) {
+        files.forEach(file -> {
+            if (!Files.exists(directory.resolve(file))) {
+                throw new RuntimeException(new IOException());
+            }
+        });
     }
 }
