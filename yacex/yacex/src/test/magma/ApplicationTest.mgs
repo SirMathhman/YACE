@@ -1,6 +1,56 @@
-import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.{ AfterEach, Assertions, BeforeEach, Test }
+
+import java.{
+    io.IOException,
+    util.Set,
+    file.{
+        FileVisitResult,
+        Files,
+        Path,
+        SimpleFileVisitor,
+        attribute.BasicFileAttributes
+    }
+}
+
+let directory = Optional.empty[Path]()
+
+@BeforeEach
+def setUp => directory = Optional.of(Files.createTempDirectory("working"))
+
+@AfterEach
+def tearDown => directory.ifPresent(Files.walkFileTree(_, class () => {
+    @Override
+    def visitFile(file : Path, _) => {
+        Files.deleteIfExists(file)
+        return FileVisitResult.CONTINUE
+    }
+
+    @Override
+    def postVisitDirectory(dir : Path, _) => {
+        Files.deleteIfExists(dir)
+        return FileVisitResult.CONTINUE
+    }
+
+    implements SimpleFileVisitor[Path]
+}))
 
 @Test
-def test() => {
+def nothing => {
 
 }
+
+@Test
+def missing => assertMissing("Empty.java")
+
+private def assertMissing(params files : String) => Assertions.assertThrows(IOException.type, () =>
+    try => run(Set.of(files))
+    catch (e : RuntimeException) => throw e.getCause()
+)
+
+@Test
+def missing_multiple => assertMissing("First.java", "Second.java")
+
+private void run(Set<String> files) files.forEach(file -> {
+    if !Files.exists(directory.resolve(file))
+        throw RuntimeException(IOException())
+})
