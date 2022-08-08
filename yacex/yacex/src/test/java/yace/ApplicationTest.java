@@ -17,8 +17,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ApplicationTest {
 
@@ -54,9 +53,7 @@ public class ApplicationTest {
     @ParameterizedTest
     @ValueSource(strings = {"First", "Second"})
     void source_does_not_exist(String name) {
-        assertThrows(SourceDoesNotExistException.class, () -> {
-            run(Collections.singleton(name + ".java"));
-        });
+        assertThrows(SourceDoesNotExistException.class, () -> runWithStrings(Collections.singleton(name + ".java")));
     }
 
     @ParameterizedTest
@@ -66,18 +63,35 @@ public class ApplicationTest {
                 .mapToObj(String::valueOf)
                 .map(value -> "Test" + value + ".java")
                 .collect(Collectors.toSet());
-        assertThrows(SourceDoesNotExistException.class, () -> run(sources));
+        assertThrows(SourceDoesNotExistException.class, () -> runWithStrings(sources));
     }
 
     @ParameterizedTest
     @ValueSource(strings = {"First", "Second"})
-    void target_exists(String name) throws IOException {
-        Files.createFile(working.resolve(name + ".java"));
+    void target_exists(String name) throws IOException, SourceDoesNotExistException {
+        var source = working.resolve(name + ".java");
+        Files.createFile(source);
+        run(Collections.singleton(source));
+        assertTrue(Files.exists(working.resolve(name + ".mgs")));
     }
 
-    private void run(Set<String> sources) throws SourceDoesNotExistException {
-        for (String source : sources) {
-            throw new SourceDoesNotExistException(working.resolve(source));
+    private void runWithStrings(Set<String> sources) throws SourceDoesNotExistException, IOException {
+        run(sources.stream()
+                .map(value -> working.resolve(value))
+                .collect(Collectors.toSet()));
+    }
+
+    private void run(Set<Path> sources) throws SourceDoesNotExistException, IOException {
+        for (Path source : sources) {
+            if (!Files.exists(source)) {
+                throw new SourceDoesNotExistException(source);
+            }
+
+            var fileName = source.getFileName().toString();
+            var separator = fileName.indexOf('.');
+            var fileNameWithoutExtension = fileName.substring(0, separator);
+
+            Files.createFile(source.resolveSibling(fileNameWithoutExtension + ".mgs"));
         }
     }
 }
