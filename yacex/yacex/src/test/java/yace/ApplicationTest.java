@@ -68,30 +68,16 @@ public class ApplicationTest {
 
     @ParameterizedTest
     @ValueSource(strings = {"First", "Second"})
-    void target_exists(String name) throws IOException, SourceDoesNotExistException {
+    void target_exists(String name) throws IOException, ApplicationException {
         var source = working.resolve(name + ".java");
         Files.createFile(source);
-        run(Collections.singleton(source));
+        new Application(Collections.singleton(source)).run();
         assertTrue(Files.exists(working.resolve(name + ".mgs")));
     }
 
-    private void runWithStrings(Set<String> sources) throws SourceDoesNotExistException, IOException {
-        run(sources.stream()
+    private void runWithStrings(Set<String> sources) throws ApplicationException {
+        new Application(sources.stream()
                 .map(value -> working.resolve(value))
-                .collect(Collectors.toSet()));
-    }
-
-    private void run(Set<Path> sources) throws SourceDoesNotExistException, IOException {
-        for (Path source : sources) {
-            if (!Files.exists(source)) {
-                throw new SourceDoesNotExistException(source);
-            }
-
-            var fileName = source.getFileName().toString();
-            var separator = fileName.indexOf('.');
-            var fileNameWithoutExtension = fileName.substring(0, separator);
-
-            Files.createFile(source.resolveSibling(fileNameWithoutExtension + ".mgs"));
-        }
+                .collect(Collectors.toSet())).run();
     }
 }
