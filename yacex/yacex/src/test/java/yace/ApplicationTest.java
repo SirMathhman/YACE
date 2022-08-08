@@ -76,11 +76,15 @@ public class ApplicationTest {
 
     @ParameterizedTest
     @ValueSource(strings = {"First", "Second"})
-    void target_compiles(String name) throws IOException, ApplicationException {
+    void target_has_content(String name) throws IOException, ApplicationException {
+        runWithClassName(name);
+        assertEquals("", Files.readString(working.resolve(name + ".mgs")));
+    }
+
+    private void runWithClassName(String name) throws IOException, ApplicationException {
         var source = working.resolve(name + ".java");
         Files.writeString(source, "class " + name + " {}");
         new Application(Collections.singleton(source)).run();
-        assertTrue(Files.exists(working.resolve(name + ".mgs")));
     }
 
     private void runWithStrings(Set<String> sources) throws ApplicationException {
