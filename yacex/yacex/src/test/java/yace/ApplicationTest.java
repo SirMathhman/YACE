@@ -21,7 +21,14 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class ApplicationTest {
 
+    public static final String DEFAULT_NAME = "DefaultName";
     private Path working;
+
+    private static String renderClass(String name) {
+        var self = new ClassRenderer(name);
+        self.namePrefix = 0;
+        return self.renderClass();
+    }
 
     @BeforeEach
     void setUp() throws IOException {
@@ -84,11 +91,45 @@ public class ApplicationTest {
     @ParameterizedTest
     @ValueSource(strings = {"First", "Second"})
     void target_has_valid_class_name(String name) {
-        assertThrows(NameMismatchException.class, () -> runWithInput(name, "class Test {}"));
+        assertThrows(NameMismatchException.class, () -> runWithInput(name, renderClass("Test")));
+    }
+
+    @ParameterizedTest
+    @ValueSource(ints = {0, 1, 2})
+    void target_class_prefix(int extent) {
+        assertDoesNotThrow(() -> {
+            var self = new ClassRenderer(DEFAULT_NAME);
+            self.classPrefix = extent;
+            runWithInput(self.renderClass());
+        });
+    }
+
+    @ParameterizedTest
+    @ValueSource(ints = {1, 2})
+    void target_name_prefix(int extent) {
+        assertDoesNotThrow(() -> {
+            var self = new ClassRenderer(DEFAULT_NAME);
+            self.namePrefix = extent;
+            runWithInput(self.renderClass());
+        });
+    }
+
+    @ParameterizedTest
+    @ValueSource(ints = {0, 1, 2})
+    void target_name_suffix(int extent) {
+        assertDoesNotThrow(() -> {
+            var self = new ClassRenderer(DEFAULT_NAME);
+            self.nameSuffix = extent;
+            runWithInput(self.renderClass());
+        });
     }
 
     private void runWithClassName(String name) throws IOException, ApplicationException {
-        runWithInput(name, "class " + name + " {}");
+        runWithInput(name, renderClass(name));
+    }
+
+    private void runWithInput(String input) throws IOException, ApplicationException {
+        runWithInput(DEFAULT_NAME, input);
     }
 
     private void runWithInput(String name, String input) throws IOException, ApplicationException {

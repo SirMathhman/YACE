@@ -39,7 +39,8 @@ public class Application {
                 throw new SourceEmptyException(source);
             }
 
-            var name = input.substring("class ".length(), input.indexOf('{') - 1);
+            var line = input.strip();
+            var name = line.substring("class ".length(), line.indexOf('{')).strip();
 
             var fileName = source.getFileName().toString();
             var separator = fileName.indexOf('.');
