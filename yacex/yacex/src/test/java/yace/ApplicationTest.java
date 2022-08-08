@@ -68,7 +68,7 @@ public class ApplicationTest {
 
     @ParameterizedTest
     @ValueSource(strings = {"First", "Second"})
-    void target_empty(String name) throws IOException, ApplicationException {
+    void target_empty(String name) throws IOException {
         var source = working.resolve(name + ".java");
         Files.createFile(source);
         assertThrows(SourceException.class, () -> new Application(Collections.singleton(source)).run());
@@ -81,9 +81,19 @@ public class ApplicationTest {
         assertEquals("", Files.readString(working.resolve(name + ".mgs")));
     }
 
+    @ParameterizedTest
+    @ValueSource(strings = {"First", "Second"})
+    void target_has_valid_class_name(String name) {
+        assertThrows(NameMismatchException.class, () -> runWithInput(name, "class Test {}"));
+    }
+
     private void runWithClassName(String name) throws IOException, ApplicationException {
+        runWithInput(name, "class " + name + " {}");
+    }
+
+    private void runWithInput(String name, String input) throws IOException, ApplicationException {
         var source = working.resolve(name + ".java");
-        Files.writeString(source, "class " + name + " {}");
+        Files.writeString(source, input);
         new Application(Collections.singleton(source)).run();
     }
 
