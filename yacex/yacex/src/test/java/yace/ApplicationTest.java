@@ -68,9 +68,17 @@ public class ApplicationTest {
 
     @ParameterizedTest
     @ValueSource(strings = {"First", "Second"})
-    void target_exists(String name) throws IOException, ApplicationException {
+    void target_empty(String name) throws IOException, ApplicationException {
         var source = working.resolve(name + ".java");
         Files.createFile(source);
+        assertThrows(SourceException.class, () -> new Application(Collections.singleton(source)).run());
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"First", "Second"})
+    void target_compiles(String name) throws IOException, ApplicationException {
+        var source = working.resolve(name + ".java");
+        Files.writeString(source, "class " + name + " {}");
         new Application(Collections.singleton(source)).run();
         assertTrue(Files.exists(working.resolve(name + ".mgs")));
     }
