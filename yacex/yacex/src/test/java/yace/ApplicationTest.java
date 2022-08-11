@@ -12,14 +12,19 @@ import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ApplicationTest {
 
     private Path working;
+    private Path target;
+    private Path source;
 
     @BeforeEach
     void setUp() throws IOException {
         working = Files.createTempDirectory("working");
+        source = working.resolve("Target.java");
+        target = working.resolve("Target.mgs");
     }
 
     @AfterEach
@@ -40,7 +45,25 @@ public class ApplicationTest {
     }
 
     @Test
-    void target_does_not_exist() {
-        assertFalse(Files.exists(working.resolve("Target.mgs")));
+    void target_not_generated() throws IOException {
+        run();
+        assertFalse(doesTargetExist());
+    }
+
+    private boolean doesTargetExist() {
+        return Files.exists(target);
+    }
+
+    @Test
+    void target_generated() throws IOException {
+        Files.writeString(source, "class Test {}");
+        run();
+        assertTrue(doesTargetExist());
+    }
+
+    private void run() throws IOException {
+        if (Files.exists(source)) {
+            Files.createFile(target);
+        }
     }
 }
