@@ -4,8 +4,7 @@ import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 class VirtualPathTest {
 
@@ -19,5 +18,14 @@ class VirtualPathTest {
         var path = new VirtualPath();
         path.createAsFile();
         assertTrue(path.exists());
+    }
+
+    @Test
+    void createAsFileAlreadyExists() {
+        assertThrows(IOException.class, () -> {
+            var path = new VirtualPath();
+            path.createAsFile();
+            path.createAsFile();
+        });
     }
 }
