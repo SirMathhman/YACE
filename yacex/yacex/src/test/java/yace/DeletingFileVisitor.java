@@ -1,12 +1,14 @@
 package yace;
 
 import java.io.IOException;
-import java.nio.file.FileVisitResult;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.SimpleFileVisitor;
+import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
 
+/**
+ * An implementation of {@link java.nio.file.FileVisitor}
+ * which, in conjunction with {@link Files#walkFileTree(Path, FileVisitor)},
+ * deletes the passed directory in addition to the files within it.
+ */
 class DeletingFileVisitor extends SimpleFileVisitor<Path> {
     @Override
     public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
