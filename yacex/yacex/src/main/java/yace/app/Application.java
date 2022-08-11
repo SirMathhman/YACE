@@ -1,4 +1,9 @@
-package yace;
+package yace.app;
+
+import yace.CompileException;
+import yace.MismatchException;
+import yace.io.File;
+import yace.io.Path;
 
 import java.io.IOException;
 

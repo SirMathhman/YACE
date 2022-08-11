@@ -1,4 +1,4 @@
-package yace;
+package yace.io;
 
 import java.io.IOException;
 

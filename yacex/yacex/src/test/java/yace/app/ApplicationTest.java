@@ -1,7 +1,11 @@
-package yace;
+package yace.app;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import yace.CompileException;
+import yace.MismatchException;
+import yace.io.Path;
+import yace.io.VirtualFileSystem;
 
 import java.io.IOException;
 

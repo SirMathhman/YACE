@@ -1,4 +1,4 @@
-package yace;
+package yace.app;
 
 public class ApplicationException extends RuntimeException {
     public ApplicationException() {

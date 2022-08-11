@@ -1,5 +1,8 @@
 package yace;
 
+import yace.app.Application;
+import yace.io.NIOPath;
+
 import java.nio.file.Paths;
 
 /**

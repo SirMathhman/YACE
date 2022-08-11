@@ -1,8 +1,10 @@
-package yace;
+package yace.app;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import yace.io.DeletingFileVisitor;
+import yace.io.NIOPath;
 
 import java.io.IOException;
 import java.nio.file.Files;

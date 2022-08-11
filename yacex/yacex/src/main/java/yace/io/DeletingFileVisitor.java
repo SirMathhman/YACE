@@ -1,4 +1,4 @@
-package yace;
+package yace.io;
 
 import java.io.IOException;
 import java.nio.file.FileVisitResult;
@@ -12,7 +12,7 @@ import java.nio.file.attribute.BasicFileAttributes;
  * which, in conjunction with {@link Files#walkFileTree(java.nio.file.Path, FileVisitor)},
  * deletes the passed directory in addition to the files within it.
  */
-class DeletingFileVisitor extends SimpleFileVisitor<java.nio.file.Path> {
+public class DeletingFileVisitor extends SimpleFileVisitor<java.nio.file.Path> {
     @Override
     public FileVisitResult postVisitDirectory(java.nio.file.Path dir, IOException exc) throws IOException {
         Files.deleteIfExists(dir);

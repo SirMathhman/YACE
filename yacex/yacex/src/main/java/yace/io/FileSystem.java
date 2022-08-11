@@ -1,4 +1,4 @@
-package yace;
+package yace.io;
 
 /**
  * Represents a collection of files,

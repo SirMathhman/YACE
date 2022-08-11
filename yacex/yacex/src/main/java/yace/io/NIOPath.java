@@ -1,4 +1,4 @@
-package yace;
+package yace.io;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -9,7 +9,7 @@ import java.util.Optional;
  * Thin wrapper for {@link Path}.
  * Provides abstraction during testing.
  */
-public class NIOPath implements yace.Path {
+public class NIOPath implements yace.io.Path {
     private final Path value;
 
     /**
