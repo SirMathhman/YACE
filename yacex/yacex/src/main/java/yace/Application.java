@@ -6,8 +6,8 @@ import java.io.IOException;
  * The main entry point of the application.
  */
 public class Application {
-    private final NIOPath source;
-    private final yace.NIOPath target;
+    private final Path source;
+    private final Path target;
 
     /**
      * The application will run by reading the content
@@ -16,7 +16,7 @@ public class Application {
      * @param source The source/input file.
      * @param target The target/output file.
      */
-    public Application(NIOPath source, NIOPath target) {
+    public Application(Path source, Path target) {
         this.source = source;
         this.target = target;
     }

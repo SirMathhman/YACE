@@ -8,7 +8,7 @@ import java.nio.file.Path;
  * Thin wrapper for {@link Path}.
  * Provides abstraction during testing.
  */
-public class NIOPath {
+public class NIOPath implements yace.Path {
     private final Path value;
 
     /**
@@ -19,19 +19,13 @@ public class NIOPath {
         this.value = value;
     }
 
-    /**
-     *
-     * @return Whether this path exists within the file system.
-     */
-    boolean isExists() {
+    @Override
+    public boolean isExists() {
         return Files.exists(value);
     }
 
-    /**
-     * Creates this file on the file system.
-     * @throws IOException If the file could not be created.
-     */
-    void createAsFile() throws IOException {
+    @Override
+    public void createAsFile() throws IOException {
         Files.createFile(value);
     }
 }
