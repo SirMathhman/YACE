@@ -38,6 +38,18 @@ public class Application {
             if (input.isEmpty()) {
                 throw new CompileException("Input may not be empty for Java source files.");
             }
+
+            var expectedFullName = value.getName();
+            var separator = expectedFullName.indexOf('.');
+            var expectedName = expectedFullName.substring(0, separator);
+
+            var slice = input.substring("class ".length());
+            var actualName = slice.substring(0, slice.indexOf('{')).strip();
+
+            if(!expectedName.equals(actualName)) {
+                throw new MismatchException(expectedName, actualName, "Java classes require the same file name as the top-level class.");
+            }
+
             writeOutput();
         } catch (IOException e) {
             throw new ApplicationException(e);

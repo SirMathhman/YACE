@@ -52,5 +52,10 @@ public class NIOPath implements yace.Path {
         public String readAsString() throws IOException {
             return Files.readString(value);
         }
+
+        @Override
+        public String getName() {
+            return value.getFileName().toString();
+        }
     }
 }

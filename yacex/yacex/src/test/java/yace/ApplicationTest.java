@@ -27,6 +27,12 @@ class ApplicationTest {
     }
 
     @Test
+    void different_class_name() throws IOException {
+        source.createAsFile().writeString("class Test {}");
+        assertThrows(MismatchException.class, () -> new Application(source, target).run());
+    }
+
+    @Test
     void empty() throws IOException {
         source.createAsFile();
         assertThrows(CompileException.class, () -> new Application(source, target).run());

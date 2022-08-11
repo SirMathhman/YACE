@@ -24,4 +24,10 @@ public interface File {
      * If the file was empty, then an empty string will be returned.
      */
     String readAsString() throws IOException;
+
+    /**
+     * @return The name of this file is the last segment of the file,
+     * e.g. <code>first/second/third.txt</code> => <code>third.txt</code>
+     */
+    String getName();
 }

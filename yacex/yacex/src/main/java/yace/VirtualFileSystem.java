@@ -51,7 +51,7 @@ public class VirtualFileSystem implements FileSystem {
         }
 
         private VirtualFile createFileImpl() {
-            var file = new VirtualFile();
+            var file = new VirtualFile(identifier);
             identifiers.put(identifier, file);
             return file;
         }
@@ -64,7 +64,12 @@ public class VirtualFileSystem implements FileSystem {
         }
 
         private static class VirtualFile implements File {
+            private final String identifier;
             private String content = "";
+
+            public VirtualFile(String identifier) {
+                this.identifier = identifier;
+            }
 
             @Override
             public void writeString(String content) {
@@ -74,6 +79,11 @@ public class VirtualFileSystem implements FileSystem {
             @Override
             public String readAsString() {
                 return content;
+            }
+
+            @Override
+            public String getName() {
+                return identifier;
             }
         }
     }
