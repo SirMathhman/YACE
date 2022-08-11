@@ -3,6 +3,7 @@ package yace;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Optional;
 
 /**
  * Thin wrapper for {@link Path}.
@@ -13,6 +14,7 @@ public class NIOPath implements yace.Path {
 
     /**
      * The provided raw value.
+     *
      * @param value The value.
      */
     public NIOPath(Path value) {
@@ -25,7 +27,13 @@ public class NIOPath implements yace.Path {
     }
 
     @Override
-    public void createAsFile() throws IOException {
+    public File createAsFile() throws IOException {
         Files.createFile(value);
+        return null;
+    }
+
+    @Override
+    public Optional<File> existingAsFile() {
+        throw new UnsupportedOperationException();
     }
 }

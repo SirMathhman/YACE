@@ -1,20 +1,21 @@
 package yace;
 
 import java.io.IOException;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
 
 /**
  * Represents a file system implemented within memory.
  */
 public class VirtualFileSystem implements FileSystem {
-    private final Set<String> identifiers;
+    private final Map<String, File> identifiers;
 
     /**
      * Creates a file system.
      */
     public VirtualFileSystem() {
-        identifiers = new HashSet<>();
+        identifiers = new HashMap<>();
     }
 
     @Override
@@ -28,25 +29,52 @@ public class VirtualFileSystem implements FileSystem {
      */
     public static class VirtualPath implements Path {
         private final String identifier;
-        private final Set<String> identifiers;
+        private final Map<String, File> identifiers;
 
-        private VirtualPath(Set<String> identifiers, String identifier) {
+        private VirtualPath(Map<String, File> identifiers, String identifier) {
             this.identifiers = identifiers;
             this.identifier = identifier;
         }
 
         @Override
         public boolean exists() {
-            return identifiers.contains(identifier);
+            return identifiers.containsKey(identifier);
         }
 
         @Override
-        public void createAsFile() throws IOException {
+        public File createAsFile() throws IOException {
             if (exists()) {
                 throw new IOException("File already exists.");
             }
 
-            identifiers.add(identifier);
+            return createFileImpl();
+        }
+
+        private VirtualFile createFileImpl() {
+            var file = new VirtualFile();
+            identifiers.put(identifier, file);
+            return file;
+        }
+
+        @Override
+        public Optional<File> existingAsFile() {
+            return exists() ?
+                    Optional.ofNullable(identifiers.get(identifier)) :
+                    Optional.of(createFileImpl());
+        }
+
+        private static class VirtualFile implements File {
+            private String content = "";
+
+            @Override
+            public void writeString(String content) {
+                this.content = content;
+            }
+
+            @Override
+            public String readAsString() {
+                return content;
+            }
         }
     }
 }

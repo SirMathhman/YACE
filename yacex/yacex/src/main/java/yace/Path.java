@@ -1,6 +1,7 @@
 package yace;
 
 import java.io.IOException;
+import java.util.Optional;
 
 /**
  * Abstraction for data sources that exist "permanently', i.e. files.
@@ -19,5 +20,11 @@ public interface Path {
      * @throws IOException If the file already exists,
      *                     or any other internal error.
      */
-    void createAsFile() throws IOException;
+    File createAsFile() throws IOException;
+
+    /**
+     * @return a file representing the existence of this path, or nothing if the file didn't exist.
+     * @throws IOException when the file exists, but it not a file.
+     */
+    Optional<File> existingAsFile() throws IOException;
 }

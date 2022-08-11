@@ -23,12 +23,32 @@ public class Application {
 
     /**
      * Actually executes the application.
-     *
-     * @throws IOException If an internal file error happened.
      */
-    void run() throws IOException {
-        if (source.exists()) {
-            target.createAsFile();
+    void run() {
+        var input = readInput();
+
+        if (input.isEmpty()) {
+            throw new CompileException("Input may not be empty for Java source files.");
         }
+
+        writeOutput();
+    }
+
+    private void writeOutput() {
+        try {
+            target.createAsFile();
+        } catch (IOException e) {
+            throw new ApplicationException(e);
+        }
+    }
+
+    private String readInput() {
+        String input;
+        try {
+            input = source.existingAsFile().orElseThrow().readAsString();
+        } catch (IOException e) {
+            throw new ApplicationException(e);
+        }
+        return input;
     }
 }
