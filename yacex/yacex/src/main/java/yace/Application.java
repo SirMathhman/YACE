@@ -27,7 +27,7 @@ public class Application {
      * @throws IOException If an internal file error happened.
      */
     void run() throws IOException {
-        if (source.isExists()) {
+        if (source.exists()) {
             target.createAsFile();
         }
     }

@@ -20,7 +20,7 @@ public class NIOPath implements yace.Path {
     }
 
     @Override
-    public boolean isExists() {
+    public boolean exists() {
         return Files.exists(value);
     }
 

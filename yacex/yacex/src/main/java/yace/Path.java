@@ -9,7 +9,7 @@ public interface Path {
     /**
      * @return Whether this path exists within the file system.
      */
-    boolean isExists();
+    boolean exists();
 
     /**
      * Creates this file on the file system.
