@@ -31,7 +31,7 @@ public class ApplicationTest {
 
     @Test
     void target_not_generated() throws IOException {
-        new Application(source, target).run();
+        new Application(new NIOPath(source), new NIOPath(target)).run();
         assertFalse(doesTargetExist());
     }
 
@@ -42,7 +42,7 @@ public class ApplicationTest {
     @Test
     void target_generated() throws IOException {
         Files.writeString(source, "class Test {}");
-        new Application(source, target).run();
+        new Application(new NIOPath(source), new NIOPath(target)).run();
         assertTrue(doesTargetExist());
     }
 }
