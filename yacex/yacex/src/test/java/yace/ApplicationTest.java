@@ -31,7 +31,7 @@ public class ApplicationTest {
 
     @Test
     void target_not_generated() throws IOException {
-        run();
+        new Application(source, target).run();
         assertFalse(doesTargetExist());
     }
 
@@ -42,13 +42,7 @@ public class ApplicationTest {
     @Test
     void target_generated() throws IOException {
         Files.writeString(source, "class Test {}");
-        run();
+        new Application(source, target).run();
         assertTrue(doesTargetExist());
-    }
-
-    private void run() throws IOException {
-        if (Files.exists(source)) {
-            Files.createFile(target);
-        }
     }
 }
