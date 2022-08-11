@@ -8,7 +8,7 @@ import java.io.IOException;
 import static org.junit.jupiter.api.Assertions.*;
 
 class VirtualPathTest {
-    private VirtualFileSystem system;
+    private FileSystem system;
 
     @BeforeEach
     void setUp() {
