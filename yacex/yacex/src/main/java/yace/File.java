@@ -1,5 +1,7 @@
 package yace;
 
+import java.io.IOException;
+
 /**
  * Represents a singular item on the file system
  * that <b>actually</b> exists,
@@ -13,7 +15,7 @@ public interface File {
      *
      * @param content to write.
      */
-    void writeString(String content);
+    void writeString(String content) throws IOException;
 
     /**
      * Reads the content of this file as string.
@@ -21,5 +23,5 @@ public interface File {
      * @return The content of the file.
      * If the file was empty, then an empty string will be returned.
      */
-    String readAsString();
+    String readAsString() throws IOException;
 }

@@ -34,6 +34,23 @@ public class NIOPath implements yace.Path {
 
     @Override
     public Optional<File> existingAsFile() {
-        throw new UnsupportedOperationException();
+        return Files.exists(value) ? Optional.of(new NIOFile()) : Optional.empty();
+    }
+
+    @Override
+    public String toString() {
+        return value.toAbsolutePath().toString();
+    }
+
+    private class NIOFile implements File {
+        @Override
+        public void writeString(String content) throws IOException {
+            Files.writeString(value, content);
+        }
+
+        @Override
+        public String readAsString() throws IOException {
+            return Files.readString(value);
+        }
     }
 }

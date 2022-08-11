@@ -25,13 +25,23 @@ public class Application {
      * Actually executes the application.
      */
     void run() {
-        var input = readInput();
-
-        if (input.isEmpty()) {
-            throw new CompileException("Input may not be empty for Java source files.");
+        try {
+            source.existingAsFile().ifPresent(this::runInFile);
+        } catch (IOException e) {
+            throw new ApplicationException(e);
         }
+    }
 
-        writeOutput();
+    private void runInFile(File value) {
+        try {
+            var input = value.readAsString();
+            if (input.isEmpty()) {
+                throw new CompileException("Input may not be empty for Java source files.");
+            }
+            writeOutput();
+        } catch (IOException e) {
+            throw new ApplicationException(e);
+        }
     }
 
     private void writeOutput() {
@@ -40,15 +50,5 @@ public class Application {
         } catch (IOException e) {
             throw new ApplicationException(e);
         }
-    }
-
-    private String readInput() {
-        String input;
-        try {
-            input = source.existingAsFile().orElseThrow().readAsString();
-        } catch (IOException e) {
-            throw new ApplicationException(e);
-        }
-        return input;
     }
 }

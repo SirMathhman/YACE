@@ -30,7 +30,7 @@ public class ApplicationIntegrationTest {
     }
 
     @Test
-    void target_not_generated() throws IOException {
+    void target_not_generated() {
         new Application(new NIOPath(source), new NIOPath(target)).run();
         assertFalse(doesTargetExist());
     }
