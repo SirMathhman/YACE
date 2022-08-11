@@ -11,6 +11,8 @@ import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
+
 public class ApplicationTest {
 
     private Path working;
@@ -38,7 +40,7 @@ public class ApplicationTest {
     }
 
     @Test
-    void test() {
-
+    void target_does_not_exist() {
+        assertFalse(Files.exists(working.resolve("Target.mgs")));
     }
 }
