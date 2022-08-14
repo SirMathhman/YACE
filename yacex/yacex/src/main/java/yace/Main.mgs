@@ -1,0 +1,10 @@
+import yace.{
+    app.Application,
+    io.NIOPath
+}
+
+import java.nio.file.Paths
+
+const source = Paths.get(".", "Index.java");
+const target = Paths.get(".", "Index.mgs");
+Application(NIOPath(source), NIOPath(target));

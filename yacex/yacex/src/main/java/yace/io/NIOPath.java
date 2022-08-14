@@ -44,7 +44,7 @@ public class NIOPath implements yace.io.Path {
 
     private class NIOFile implements File {
         @Override
-        public void writeString(String content) throws IOException {
+        public void writeAsString(String content) throws IOException {
             Files.writeString(value, content);
         }
 

@@ -8,9 +8,9 @@ import yace.io.Path;
 import yace.io.VirtualFileSystem;
 
 import java.io.IOException;
+import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 class ApplicationTest {
     private Path source;
@@ -25,20 +25,46 @@ class ApplicationTest {
 
     @Test
     void content() throws IOException {
-        source.createAsFile().writeString("class Index {}");
-        new Application(source, target).run();
+        writeSource("class Index {}");
+        runEmpty();
         assertTrue(target.exists());
     }
 
     @Test
     void different_class_name() throws IOException {
-        source.createAsFile().writeString("class Test {}");
-        assertThrows(MismatchException.class, () -> new Application(source, target).run());
+        writeSource("class Test {}");
+        assertThrows(MismatchException.class, this::runEmpty);
+    }
+
+    private void runEmpty() {
+        new Application(source, target).run(Optional.empty());
+    }
+
+    @Test
+    void task_no_target() throws IOException {
+        rename();
+        assertFalse(target.exists());
+    }
+
+    @Test
+    void rename_class() throws IOException {
+        rename();
+        assertEquals("class Bar {}", source.existingAsFile().orElseThrow()
+                .readAsString());
+    }
+
+    private void rename() throws IOException {
+        writeSource("class Foo {}");
+        new Application(source, target).run(Optional.of("Bar"));
+    }
+
+    private void writeSource(String content) throws IOException {
+        source.createAsFile().writeAsString(content);
     }
 
     @Test
     void empty() throws IOException {
         source.createAsFile();
-        assertThrows(CompileException.class, () -> new Application(source, target).run());
+        assertThrows(CompileException.class, this::runEmpty);
     }
 }

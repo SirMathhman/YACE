@@ -6,6 +6,7 @@ import yace.io.File;
 import yace.io.Path;
 
 import java.io.IOException;
+import java.util.Optional;
 
 /**
  * The main entry point of the application.
@@ -28,34 +29,41 @@ public class Application {
 
     /**
      * Actually executes the application.
+     * @param replacement The replacement of the class name.
+     *                    If the replacement is empty, then the class
+     *                    will not be renamed and the source file will be
+     *                    compiled normally.
      */
-    void run() {
+    void run(Optional<String> replacement) {
         try {
-            source.existingAsFile().ifPresent(this::runInFile);
+            source.existingAsFile().ifPresent(source1 -> runInFile(source1, replacement));
         } catch (IOException e) {
             throw new ApplicationException(e);
         }
     }
 
-    private void runInFile(File value) {
+    private void runInFile(File source, Optional<String> replacement) {
         try {
-            var input = value.readAsString();
+            var input = source.readAsString();
             if (input.isEmpty()) {
                 throw new CompileException("Input may not be empty for Java source files.");
             }
-
-            var expectedFullName = value.getName();
-            var separator = expectedFullName.indexOf('.');
-            var expectedName = expectedFullName.substring(0, separator);
-
+            
             var slice = input.substring("class ".length());
             var actualName = slice.substring(0, slice.indexOf('{')).strip();
+            
+            if (replacement.isPresent()) {
+                source.writeAsString(input.replace(actualName, replacement.orElseThrow()));
+            } else {
+                var expectedFullName = source.getName();
+                var separator = expectedFullName.indexOf('.');
+                var expectedName = expectedFullName.substring(0, separator);
+                if (!expectedName.equals(actualName)) {
+                    throw new MismatchException(expectedName, actualName, "Java classes require the same file name as the top-level class.");
+                }
 
-            if(!expectedName.equals(actualName)) {
-                throw new MismatchException(expectedName, actualName, "Java classes require the same file name as the top-level class.");
+                writeOutput();
             }
-
-            writeOutput();
         } catch (IOException e) {
             throw new ApplicationException(e);
         }

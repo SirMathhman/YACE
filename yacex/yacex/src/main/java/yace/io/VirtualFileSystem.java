@@ -72,7 +72,7 @@ public class VirtualFileSystem implements FileSystem {
             }
 
             @Override
-            public void writeString(String content) {
+            public void writeAsString(String content) {
                 this.content = content;
             }
 

@@ -15,7 +15,7 @@ public interface File {
      *
      * @param content to write.
      */
-    void writeString(String content) throws IOException;
+    void writeAsString(String content) throws IOException;
 
     /**
      * Reads the content of this file as string.
