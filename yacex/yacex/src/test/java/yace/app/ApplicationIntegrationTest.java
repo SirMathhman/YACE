@@ -34,7 +34,7 @@ public class ApplicationIntegrationTest {
 
     @Test
     void target_not_generated() {
-        new Application(new NIOPath(source), new NIOPath(target)).run(Optional.empty());
+        new Application(new NIOPath(source), new NIOPath(target)).run(Optional.empty(), false);
         assertFalse(doesTargetExist());
     }
 
@@ -45,7 +45,7 @@ public class ApplicationIntegrationTest {
     @Test
     void target_generated() throws IOException {
         Files.writeString(source, "class Target {}");
-        new Application(new NIOPath(source), new NIOPath(target)).run(Optional.empty());
+        new Application(new NIOPath(source), new NIOPath(target)).run(Optional.empty(), false);
         assertTrue(doesTargetExist());
     }
 }

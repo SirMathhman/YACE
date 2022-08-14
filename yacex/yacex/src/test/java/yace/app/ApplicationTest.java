@@ -37,25 +37,43 @@ class ApplicationTest {
     }
 
     private void runEmpty() {
-        new Application(source, target).run(Optional.empty());
+        new Application(source, target).run(Optional.empty(), false);
     }
 
     @Test
     void task_no_target() throws IOException {
-        rename();
+        rename(false);
         assertFalse(target.exists());
     }
 
     @Test
     void rename_class() throws IOException {
-        rename();
+        rename(false);
         assertEquals("class Bar {}", source.existingAsFile().orElseThrow()
                 .readAsString());
     }
 
-    private void rename() throws IOException {
+    @Test
+    void rename_preview() throws IOException {
+        var output = renamePreviewImpl();
+        assertEquals("class Bar {}", output);
+    }
+
+    @Test
+    void rename_preview_file_not_change() throws IOException {
+        renamePreviewImpl();
+        assertEquals("class Foo {}", source.existingAsFile()
+                .orElseThrow()
+                .readAsString());
+    }
+
+    private String renamePreviewImpl() throws IOException {
+        return rename(true).orElseThrow();
+    }
+
+    private Optional<String> rename(boolean shouldPreview) throws IOException {
         writeSource("class Foo {}");
-        new Application(source, target).run(Optional.of("Bar"));
+        return new Application(source, target).run(Optional.of("Bar"), shouldPreview);
     }
 
     private void writeSource(String content) throws IOException {
