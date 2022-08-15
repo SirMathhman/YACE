@@ -47,36 +47,38 @@ public class Application {
 
     private Optional<String> runInSource(File source, Optional<String> replacement, boolean shouldPreview) {
         try {
-            var input = source.readAsString();
-            if (input.isEmpty()) {
-                throw new CompileException("Input may not be empty for Java source files.");
-            }
-
-            var slice = input.substring("class ".length());
-            var actualName = slice.substring(0, slice.indexOf('{')).strip();
-
-            if (replacement.isPresent()) {
-                var output = input.replace(actualName, replacement.orElseThrow());
-                if (shouldPreview) {
-                    return Optional.of(output);
-                } else {
-                    source.writeAsString(output);
-                    return Optional.empty();
-                }
-            } else {
-                var expectedFullName = source.getName();
-                var separator = expectedFullName.indexOf('.');
-                var expectedName = expectedFullName.substring(0, separator);
-                if (!expectedName.equals(actualName)) {
-                    throw new MismatchException(expectedName, actualName, "Java classes require the same file name as the top-level class.");
-                }
-
-                writeOutput();
-                return Optional.empty();
-            }
+            return compile(source, replacement.map(value -> new Rename(shouldPreview, value)));
         } catch (IOException e) {
             throw new ApplicationException(e);
         }
+    }
+
+    private Optional<String> compile(File source, Optional<Rename> renamer) throws IOException {
+        var input = source.readAsString();
+        if (input.isEmpty()) {
+            throw new CompileException("Input may not be empty for Java source files.");
+        }
+
+        var slice = input.substring("class ".length());
+        var actualName = slice.substring(0, slice.indexOf('{')).strip();
+
+        if (renamer.isPresent()) {
+            return renamer.orElseThrow().perform(source, input, actualName);
+        } else {
+            return compile(source, actualName);
+        }
+    }
+
+    private Optional<String> compile(File source, String actualName) {
+        var expectedFullName = source.getName();
+        var separator = expectedFullName.indexOf('.');
+        var expectedName = expectedFullName.substring(0, separator);
+        if (!expectedName.equals(actualName)) {
+            throw new MismatchException(expectedName, actualName, "Java classes require the same file name as the top-level class.");
+        }
+
+        writeOutput();
+        return Optional.empty();
     }
 
     private void writeOutput() {
