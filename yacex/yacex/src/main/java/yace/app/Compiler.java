@@ -29,7 +29,7 @@ public class Compiler extends Application {
         var separator = expectedFullName.indexOf('.');
         var expectedName = expectedFullName.substring(0, separator);
         if (!expectedName.equals(actualName)) {
-            throw new MismatchException(expectedName, actualName, "Java classes require the same file name as the top-level class.");
+            throw new MismatchException(expectedName, actualName, "Java classes require the same file name as the top-level class.", new Renamer(false, expectedName));
         }
 
         writeOutput();

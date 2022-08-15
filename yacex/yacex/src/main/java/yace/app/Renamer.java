@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.Optional;
 
 public class Renamer {
+    public final String summary = "Rename Class";
     private final boolean shouldPreview;
     private final String replacement;
 
@@ -20,5 +21,9 @@ public class Renamer {
             input1.source.writeAsString(output);
             return Optional.empty();
         }
+    }
+
+    public String createDetails() {
+        return "To " + replacement;
     }
 }

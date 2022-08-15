@@ -32,7 +32,7 @@ public abstract class Application {
      *
      * @return The preview of the output.
      */
-    Optional<String> run() {
+    public Optional<String> run() {
         try {
             return source.existingAsFile().flatMap(this::runInSource);
         } catch (IOException e) {
