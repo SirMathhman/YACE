@@ -1,6 +1,6 @@
 package yace;
 
-import yace.app.Application;
+import yace.app.Compiler;
 import yace.io.NIOPath;
 
 import java.nio.file.Paths;
@@ -12,6 +12,6 @@ public class Main {
     public static void main(String[] args) {
         var source = Paths.get(".", "Index.java");
         var target = Paths.get(".", "Index.mgs");
-        new Application(new NIOPath(source), new NIOPath(target));
+        new Compiler(new NIOPath(source), new NIOPath(target));
     }
 }

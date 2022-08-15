@@ -8,7 +8,6 @@ import yace.io.Path;
 import yace.io.VirtualFileSystem;
 
 import java.io.IOException;
-import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -37,20 +36,19 @@ class ApplicationTest {
     }
 
     private void runEmpty() {
-        new Application(source, target).run(Optional.empty(), false);
+        new Compiler(source, target).run();
     }
 
     @Test
     void task_no_target() throws IOException {
-        rename(false);
+        rename();
         assertFalse(target.exists());
     }
 
     @Test
     void rename_class() throws IOException {
-        rename(false);
-        assertEquals("class Bar {}", source.existingAsFile().orElseThrow()
-                .readAsString());
+        rename();
+        assertEquals("class Bar {}", source.existingAsFile().orElseThrow().readAsString());
     }
 
     @Test
@@ -68,12 +66,15 @@ class ApplicationTest {
     }
 
     private String renamePreviewImpl() throws IOException {
-        return rename(true).orElseThrow();
+        writeSource("class Foo {}");
+        return new Refactorer(source, target, new Renamer(true, "Bar"))
+                .run()
+                .orElseThrow();
     }
 
-    private Optional<String> rename(boolean shouldPreview) throws IOException {
+    private void rename() throws IOException {
         writeSource("class Foo {}");
-        return new Application(source, target).run(Optional.of("Bar"), shouldPreview);
+        new Refactorer(source, target, new Renamer(false, "Bar")).run();
     }
 
     private void writeSource(String content) throws IOException {

@@ -9,7 +9,6 @@ import yace.io.NIOPath;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -34,7 +33,7 @@ public class ApplicationIntegrationTest {
 
     @Test
     void target_not_generated() {
-        new Application(new NIOPath(source), new NIOPath(target)).run(Optional.empty(), false);
+        new Compiler(new NIOPath(source), new NIOPath(target));
         assertFalse(doesTargetExist());
     }
 
@@ -45,7 +44,7 @@ public class ApplicationIntegrationTest {
     @Test
     void target_generated() throws IOException {
         Files.writeString(source, "class Target {}");
-        new Application(new NIOPath(source), new NIOPath(target)).run(Optional.empty(), false);
+        new Compiler(new NIOPath(source), new NIOPath(target)).run();
         assertTrue(doesTargetExist());
     }
 }

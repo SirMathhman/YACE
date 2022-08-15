@@ -1,25 +1,23 @@
 package yace.app;
 
-import yace.io.File;
-
 import java.io.IOException;
 import java.util.Optional;
 
-public class Rename {
+public class Renamer {
     private final boolean shouldPreview;
     private final String replacement;
 
-    public Rename(boolean shouldPreview, String replacement) {
+    public Renamer(boolean shouldPreview, String replacement) {
         this.shouldPreview = shouldPreview;
         this.replacement = replacement;
     }
 
-    Optional<String> perform(File source, String input, String actualName) throws IOException {
-        var output = input.replace(actualName, replacement);
+    Optional<String> perform(Input input1) throws IOException {
+        var output = input1.input.replace(input1.actualName, replacement);
         if (shouldPreview) {
             return Optional.of(output);
         } else {
-            source.writeAsString(output);
+            input1.source.writeAsString(output);
             return Optional.empty();
         }
     }
