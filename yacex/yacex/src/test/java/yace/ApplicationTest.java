@@ -20,7 +20,7 @@ public class ApplicationTest {
 
     private static void format(Path source) throws IOException {
         var input = Files.readString(source);
-        var output = input.isBlank() ? "" : "class Test {\n}";
+        var output = input.isBlank() ? "" : renderFormattedClass();
         Files.writeString(source, output);
     }
 
@@ -54,7 +54,15 @@ public class ApplicationTest {
     @ParameterizedTest
     @ValueSource(ints = {0, 1, 2})
     void format_whitespace_before_class_keyword(int spacing) {
-        assertFormat(" ".repeat(spacing) + "class Test {}", "class Test {\n}");
+        assertFormat(renderClass(" ".repeat(spacing), ""), renderFormattedClass());
+    }
+
+    private static String renderFormattedClass() {
+        return renderClass("", "\n");
+    }
+
+    private static String renderClass(String beforeClassWhitespace, String beforeBrace) {
+        return beforeClassWhitespace + "class Test {" + beforeBrace + "}";
     }
 
     private static class DeletingVisitor extends SimpleFileVisitor<Path> {
