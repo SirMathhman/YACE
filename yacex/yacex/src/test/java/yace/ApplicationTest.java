@@ -14,10 +14,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class ApplicationTest {
     private Optional<Path> workingDirectory = Optional.empty();
 
-    private static Analysis createEmptySourceError() {
-        return new Analysis("Source file is empty, nothing to analyze.");
-    }
-
     @BeforeEach
     void setUp() throws IOException {
         workingDirectory = Optional.of(Files.createTempDirectory("working"));
@@ -53,6 +49,7 @@ public class ApplicationTest {
 
     @Test
     void empty_analyze() {
-        assertEquals(createEmptySourceError(), createEmptySourceError());
+        var source = createSource();
+        assertEquals(new EmptySourceError(source), new EmptySourceError(source));
     }
 }
