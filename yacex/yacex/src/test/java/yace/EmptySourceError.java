@@ -3,6 +3,7 @@ package yace;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Objects;
 
 public class EmptySourceError {
     private final Path source;
@@ -11,8 +12,17 @@ public class EmptySourceError {
         this.source = source;
     }
 
-    String computeMessage() {
-        return String.format("Source file '%s' is empty, nothing to analyze.", source.toAbsolutePath());
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        EmptySourceError that = (EmptySourceError) o;
+        return Objects.equals(source, that.source);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(source);
     }
 
     void apply() throws IOException {

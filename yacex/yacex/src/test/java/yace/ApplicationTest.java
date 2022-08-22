@@ -62,13 +62,24 @@ public class ApplicationTest {
     @Test
     void empty_analyze() {
         var source = createSource();
-        assertEquals(new EmptySourceError(source), new EmptySourceError(source));
+        assertEquals(new EmptySourceError(source), analyze(source));
+    }
+
+    private static EmptySourceError analyze(Path source) {
+        return new EmptySourceError(source);
     }
 
     @ParameterizedTest
     @ValueSource(strings = {" ", "\t", "\n"})
     void whitespace_format(String value) throws IOException {
         assertFormat(value);
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {" ", "\t", "\n"})
+    void whitespace_analyze(String value) {
+        var source = createSource(value);
+        assertEquals(new EmptySourceError(source), analyze(source));
     }
 
     private void assertFormat(String value) throws IOException {
