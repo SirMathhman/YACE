@@ -3,6 +3,8 @@ package yace;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -33,14 +35,24 @@ public class ApplicationTest {
     // format, analyze, refactor, compile
     @Test
     void empty_format() throws IOException {
-        var source = createSource();
-        assertEquals("", Files.readString(source));
+        assertFormat("");
+    }
+
+    private void format(Path source) throws IOException {
+        var input = Files.readString(source);
+        if(input.length() != 0) {
+            Files.writeString(source, input.strip());
+        }
     }
 
     private Path createSource() {
+        return createSource("");
+    }
+
+    private Path createSource(String value) {
         try {
             var resolve = workingDirectory.orElseThrow().resolve("Index.java");
-            Files.createFile(resolve);
+            Files.writeString(resolve, value);
             return resolve;
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -51,5 +63,17 @@ public class ApplicationTest {
     void empty_analyze() {
         var source = createSource();
         assertEquals(new EmptySourceError(source), new EmptySourceError(source));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {" ", "\t", "\n"})
+    void whitespace_format(String value) throws IOException {
+        assertFormat(value);
+    }
+
+    private void assertFormat(String value) throws IOException {
+        var source = createSource(value);
+        format(source);
+        assertEquals("", Files.readString(source));
     }
 }
