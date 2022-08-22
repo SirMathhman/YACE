@@ -1,7 +1,9 @@
 package yace;
 
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.nio.file.FileVisitResult;
@@ -30,6 +32,13 @@ public class ApplicationTest {
         });
     }
 
+    // format, analyze, refactor, compile
+    @Test
+    void empty_format() throws IOException {
+        var source = workingDirectory.orElseThrow();
+        Files.createFile(source.resolve("Index.java"));
+        Assertions.assertEquals("", Files.readString(source));
+    }
 
     private static class DeletingVisitor extends SimpleFileVisitor<Path> {
         @Override
