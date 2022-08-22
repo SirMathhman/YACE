@@ -14,6 +14,7 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ApplicationTest {
+    private final Application application = new Application();
     private Optional<Path> workingDirectory = Optional.empty();
 
     @BeforeEach
@@ -38,13 +39,6 @@ public class ApplicationTest {
         assertFormat("");
     }
 
-    private void format(Path source) throws IOException {
-        var input = Files.readString(source);
-        if(input.length() != 0) {
-            Files.writeString(source, input.strip());
-        }
-    }
-
     private Path createSource() {
         return createSource("");
     }
@@ -62,11 +56,7 @@ public class ApplicationTest {
     @Test
     void empty_analyze() {
         var source = createSource();
-        assertEquals(new EmptySourceError(source), analyze(source));
-    }
-
-    private static EmptySourceError analyze(Path source) {
-        return new EmptySourceError(source);
+        assertEquals(new EmptySourceError(source), new Application().analyze(source));
     }
 
     @ParameterizedTest
@@ -79,12 +69,12 @@ public class ApplicationTest {
     @ValueSource(strings = {" ", "\t", "\n"})
     void whitespace_analyze(String value) {
         var source = createSource(value);
-        assertEquals(new EmptySourceError(source), analyze(source));
+        assertEquals(new EmptySourceError(source), new Application().analyze(source));
     }
 
     private void assertFormat(String value) throws IOException {
         var source = createSource(value);
-        format(source);
+        application.format(source);
         assertEquals("", Files.readString(source));
     }
 }
