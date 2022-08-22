@@ -1,20 +1,22 @@
 package yace;
 
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
-import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.SimpleFileVisitor;
-import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ApplicationTest {
     private Optional<Path> workingDirectory = Optional.empty();
+
+    private static Analysis createEmptySourceError() {
+        return new Analysis("Source file is empty, nothing to analyze.");
+    }
 
     @BeforeEach
     void setUp() throws IOException {
@@ -35,22 +37,22 @@ public class ApplicationTest {
     // format, analyze, refactor, compile
     @Test
     void empty_format() throws IOException {
-        var source = workingDirectory.orElseThrow();
-        Files.createFile(source.resolve("Index.java"));
-        Assertions.assertEquals("", Files.readString(source));
+        var source = createSource();
+        assertEquals("", Files.readString(source));
     }
 
-    private static class DeletingVisitor extends SimpleFileVisitor<Path> {
-        @Override
-        public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
-            Files.deleteIfExists(dir);
-            return FileVisitResult.CONTINUE;
+    private Path createSource() {
+        try {
+            var resolve = workingDirectory.orElseThrow().resolve("Index.java");
+            Files.createFile(resolve);
+            return resolve;
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
+    }
 
-        @Override
-        public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-            Files.deleteIfExists(file);
-            return FileVisitResult.CONTINUE;
-        }
+    @Test
+    void empty_analyze() {
+        assertEquals(createEmptySourceError(), createEmptySourceError());
     }
 }
