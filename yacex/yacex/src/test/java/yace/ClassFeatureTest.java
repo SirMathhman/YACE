@@ -64,19 +64,29 @@ public class ClassFeatureTest extends ApplicationFeatureTest {
     @ParameterizedTest
     @ValueSource(strings = {"First", "Second"})
     void class_name_format(String name) {
-        assertClassFormat(name, 0);
+        assertClassFormat(name, 0, "");
     }
 
     @ParameterizedTest
     @ValueSource(ints = {0, 1, 2})
     void class_suffix_format(int spacing) {
-        assertClassFormat("Test", spacing);
+        assertClassFormat("Test", spacing, "");
     }
 
-    private void assertClassFormat(String name, int spacing) {
-        assertClass(builder -> builder.setName(name).setNameSuffix(spacing), new ClassBuilder()
+    @ParameterizedTest
+    @ValueSource(strings = {"{}", "{temp}"})
+    void class_body_format(String body) {
+        assertClassFormat("Test", 0, body);
+    }
+
+    private void assertClassFormat(String name, int spacing, String body) {
+        assertClass(builder -> builder.setName(name)
+                .setNameSuffix(spacing)
+                .setBody(body), new ClassBuilder()
                 .setKeywordSuffix(1)
                 .setName(name)
+                .setNameSuffix(1)
+                .setBody(body)
                 .build());
     }
 }

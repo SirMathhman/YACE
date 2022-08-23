@@ -25,7 +25,8 @@ public class ClassNode implements Renderable {
     public String render() {
         return renderSpacing(prefix) + "class" +
                renderSpacing(keywordSuffix) + name +
-               renderSpacing(nameSuffix) + body + renderSpacing(bodySuffix);
+               renderSpacing(nameSuffix) + body +
+               renderSpacing(bodySuffix);
     }
 
     private String renderSpacing(int spacing) {
