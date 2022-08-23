@@ -5,7 +5,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Objects;
 
-public class EmptySourceError {
+public class EmptySourceError implements AnalysisResult {
     private final Path source;
 
     public EmptySourceError(Path source) {

@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Optional;
+import java.util.function.Function;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
@@ -50,6 +51,16 @@ public class ApplicationFeatureTest {
             var source = createSource(input);
             application.format(source);
             assertEquals(output, Files.readString(source));
+        } catch (IOException e) {
+            fail(e);
+        }
+    }
+
+    protected void assertAnalyzeError(String value, Function<Path, ?> toError) {
+        try {
+            var source = createSource(value);
+            var apply = toError.apply(source);
+            assertEquals(apply, new Application().analyze(source));
         } catch (IOException e) {
             fail(e);
         }
