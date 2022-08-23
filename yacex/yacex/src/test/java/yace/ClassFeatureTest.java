@@ -27,7 +27,7 @@ public class ClassFeatureTest extends ApplicationFeatureTest {
     @ParameterizedTest
     @ValueSource(ints = {0, 1, 2})
     void class_name_format_trailing_whitespace(int spacing) {
-        assertClassFormat(builder -> builder.setSuffix(spacing));
+        assertClassFormat(builder -> builder.setInfix(spacing));
     }
 
     @Test
@@ -54,6 +54,6 @@ public class ClassFeatureTest extends ApplicationFeatureTest {
     @ParameterizedTest
     @ValueSource(ints = {0, 1, 2})
     void class_name_analyze_trailing_whitespace(int spacing) {
-        assertAnalyzeClass(builder -> builder.setSuffix(spacing));
+        assertAnalyzeClass(builder -> builder.setInfix(spacing));
     }
 }

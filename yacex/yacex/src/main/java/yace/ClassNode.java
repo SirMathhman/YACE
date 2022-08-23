@@ -2,21 +2,29 @@ package yace;
 
 public class ClassNode implements Renderable {
     private final int prefix;
-    private final int suffix;
+    private final int infix;
     private final String name;
+    private final int suffix;
 
-    public ClassNode(int prefix, int suffix, String name) {
+    public ClassNode(int prefix, int infix, String name, int suffix) {
         this.prefix = prefix;
-        this.suffix = suffix;
+        this.infix = infix;
         this.name = name;
+        this.suffix = suffix;
     }
 
     public ClassNode() {
-        this(0, 0, "");
+        this(0, 0, "", 0);
     }
 
     @Override
     public String render() {
-        return new Spacing(prefix).render() + "class" + new Spacing(suffix).render() + name;
+        return renderSpacing(prefix) + "class" +
+               renderSpacing(infix) + name +
+               renderSpacing(suffix);
+    }
+
+    private String renderSpacing(int spacing) {
+        return new Spacing(spacing).render();
     }
 }
