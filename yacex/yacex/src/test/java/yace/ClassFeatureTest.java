@@ -4,13 +4,16 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
+import java.io.IOException;
 import java.util.function.Function;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ClassFeatureTest extends ApplicationFeatureTest {
 
     @ParameterizedTest
     @ValueSource(ints = {0, 1, 2})
-    void class_keyword_format_leading_whitespace(int spacing) {
+    void class_prefix(int spacing) {
         assertClassKeyword(builder -> builder.setPrefix(spacing));
     }
 
@@ -21,11 +24,7 @@ public class ClassFeatureTest extends ApplicationFeatureTest {
     private void assertClass(Function<ClassBuilder, ClassBuilder> unformatter, ClassNode output) {
         var builder = new ClassBuilder();
         var classBuilder = unformatter.apply(builder);
-        assertRenderableFormat(classBuilder.build(), output);
-    }
-
-    private void assertRenderableFormat(ClassNode input, ClassNode output) {
-        assertFormat(input.render(), output.render());
+        assertFormat(classBuilder.build().render(), output.render());
     }
 
     @ParameterizedTest
@@ -36,29 +35,29 @@ public class ClassFeatureTest extends ApplicationFeatureTest {
 
     @Test
     void class_keyword_analyze() {
-        assertAnalyzeClass(new ClassNode());
+        assertAnalyzeClassError(new ClassNode());
     }
 
-    private void assertAnalyzeClass(ClassNode input) {
+    private void assertAnalyzeClassError(ClassNode input) {
         assertAnalyzeError(input.render(), path -> new ClassStructureError(new ClassNode().render()));
     }
 
     @ParameterizedTest
     @ValueSource(ints = {0, 1, 2})
     void class_keyword_analyze_leading_whitespace(int spacing) {
-        assertAnalyzeClass(builder -> builder.setPrefix(spacing));
+        assertAnalyzeClassError(builder -> builder.setPrefix(spacing));
     }
 
-    private void assertAnalyzeClass(Function<ClassBuilder, ClassBuilder> function) {
+    private void assertAnalyzeClassError(Function<ClassBuilder, ClassBuilder> function) {
         var builder = new ClassBuilder();
         var classBuilder = function.apply(builder);
-        assertAnalyzeClass(classBuilder.build());
+        assertAnalyzeClassError(classBuilder.build());
     }
 
     @ParameterizedTest
     @ValueSource(ints = {0, 1, 2})
     void class_analyze_infix(int spacing) {
-        assertAnalyzeClass(builder -> builder.setKeywordSuffix(spacing));
+        assertAnalyzeClassError(builder -> builder.setKeywordSuffix(spacing));
     }
 
     @ParameterizedTest
@@ -85,15 +84,31 @@ public class ClassFeatureTest extends ApplicationFeatureTest {
         assertClassFormat("Test", 0, "{}", spacing);
     }
 
+    @Test
+    void class_body_analyze() throws IOException {
+        var source = createSource("class Test {}");
+        var analyze = Application.analyze(source);
+        assertTrue(analyze.isEmpty());
+    }
+
     private void assertClassFormat(String name, int spacing, String body, int bodySuffix) {
+        var expectedWithName = new ClassBuilder()
+                .setKeywordSuffix(1)
+                .setName(name);
+
+        ClassBuilder expectedWithBody;
+        if (body.isEmpty()) {
+            expectedWithBody = expectedWithName;
+        } else {
+            expectedWithBody = expectedWithName
+                    .setNameSuffix(1)
+                    .setBody(body);
+        }
+
         assertClass(builder -> builder.setName(name)
                 .setNameSuffix(spacing)
                 .setBody(body)
-                .setBodySuffix(bodySuffix), new ClassBuilder()
-                .setKeywordSuffix(1)
-                .setName(name)
-                .setNameSuffix(1)
-                .setBody(body)
+                .setBodySuffix(bodySuffix), expectedWithBody
                 .build());
     }
 }

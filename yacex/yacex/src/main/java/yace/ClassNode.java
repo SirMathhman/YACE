@@ -23,13 +23,10 @@ public class ClassNode implements Renderable {
 
     @Override
     public String render() {
-        return renderSpacing(prefix) + "class" +
-               renderSpacing(keywordSuffix) + name +
-               renderSpacing(nameSuffix) + body +
-               renderSpacing(bodySuffix);
-    }
 
-    private String renderSpacing(int spacing) {
-        return new Spacing(spacing).render();
+        return new Spacing(prefix).render() +
+               new Suffixed("class", keywordSuffix).render() +
+               new Suffixed(name, nameSuffix).render() +
+               new Suffixed(body, bodySuffix).render();
     }
 }

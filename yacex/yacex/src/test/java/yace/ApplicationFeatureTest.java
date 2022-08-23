@@ -60,7 +60,8 @@ public class ApplicationFeatureTest {
         try {
             var source = createSource(value);
             var apply = toError.apply(source);
-            assertEquals(apply, new Application().analyze(source));
+            var analyze = Application.analyze(source);
+            assertEquals(apply, analyze.orElseThrow());
         } catch (IOException e) {
             fail(e);
         }
