@@ -26,7 +26,7 @@ public class Application {
                 var name = strippedInput.substring("class".length());
                 var strippedName = name.strip();
                 output = new ClassBuilder()
-                        .setInfix(1)
+                        .setKeywordSuffix(1)
                         .setName(strippedName)
                         .build()
                         .render();

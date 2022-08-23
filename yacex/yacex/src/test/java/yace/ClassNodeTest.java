@@ -24,7 +24,20 @@ class ClassNodeTest {
 
     @ParameterizedTest
     @ValueSource(ints = {0, 1, 2})
-    void renderWithSuffix(int spacing) {
-        assertRender("classTest" + new Spacing(spacing).render(), builder -> builder.setSuffix(spacing));
+    void renderWithNameSuffix(int spacing) {
+        assertRender("classTest" + new Spacing(spacing).render(), builder -> builder.setNameSuffix(spacing));
+    }
+
+    @Test
+    void renderWithBody(){
+        assertRender("classTest{}", builder -> builder.setBody("{}"));
+    }
+
+    @ParameterizedTest
+    @ValueSource(ints = {0, 1, 2})
+    void renderWithBodySuffix(int spacing) {
+        assertRender("classTest{}" + new Spacing(spacing).render(), builder -> builder
+                .setBody("{}")
+                .setBodySuffix(spacing));
     }
 }

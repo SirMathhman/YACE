@@ -31,7 +31,7 @@ public class ClassFeatureTest extends ApplicationFeatureTest {
     @ParameterizedTest
     @ValueSource(ints = {0, 1, 2})
     void class_keyword_format_trailing_whitespace(int spacing) {
-        assertClassKeyword(builder -> builder.setInfix(spacing));
+        assertClassKeyword(builder -> builder.setKeywordSuffix(spacing));
     }
 
     @Test
@@ -58,7 +58,7 @@ public class ClassFeatureTest extends ApplicationFeatureTest {
     @ParameterizedTest
     @ValueSource(ints = {0, 1, 2})
     void class_analyze_infix(int spacing) {
-        assertAnalyzeClass(builder -> builder.setInfix(spacing));
+        assertAnalyzeClass(builder -> builder.setKeywordSuffix(spacing));
     }
 
     @ParameterizedTest
@@ -74,8 +74,8 @@ public class ClassFeatureTest extends ApplicationFeatureTest {
     }
 
     private void assertClassFormat(String name, int spacing) {
-        assertClass(builder -> builder.setName(name).setSuffix(spacing), new ClassBuilder()
-                .setInfix(1)
+        assertClass(builder -> builder.setName(name).setNameSuffix(spacing), new ClassBuilder()
+                .setKeywordSuffix(1)
                 .setName(name)
                 .build());
     }
