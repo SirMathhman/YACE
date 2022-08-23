@@ -63,8 +63,18 @@ public class ClassFeatureTest extends ApplicationFeatureTest {
 
     @ParameterizedTest
     @ValueSource(strings = {"First", "Second"})
-    void class_keyword_format_name(String name) {
-        assertClass(builder -> builder.setName(name), new ClassBuilder()
+    void class_name_format(String name) {
+        assertClassFormat(name, 0);
+    }
+
+    @ParameterizedTest
+    @ValueSource(ints = {0, 1, 2})
+    void class_suffix_format(int spacing) {
+        assertClassFormat("Test", spacing);
+    }
+
+    private void assertClassFormat(String name, int spacing) {
+        assertClass(builder -> builder.setName(name).setSuffix(spacing), new ClassBuilder()
                 .setInfix(1)
                 .setName(name)
                 .build());
