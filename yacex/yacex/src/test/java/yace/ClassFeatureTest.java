@@ -85,6 +85,15 @@ public class ClassFeatureTest extends ApplicationFeatureTest {
     }
 
     @Test
+    void class_name_same_as_file(){
+        /*
+        TODO: implement this
+
+        - SirMathhman, 8/23/2022
+         */
+    }
+
+    @Test
     void class_body_analyze() throws IOException {
         var source = createSource("class Test {}");
         var analyze = Application.analyze(source);
