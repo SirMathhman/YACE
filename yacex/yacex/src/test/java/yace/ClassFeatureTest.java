@@ -5,40 +5,33 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
 public class ClassFeatureTest extends ApplicationFeatureTest {
-    private static String renderClass(int prefix, int suffix) {
-        return createSpacing(prefix) + " class" + createSpacing(suffix);
-    }
-
-    private static String createSpacing(int spacing) {
-        return " ".repeat(spacing);
-    }
 
     @ParameterizedTest
     @ValueSource(ints = {0, 1, 2})
     void class_name_format_leading_whitespace(int spacing) {
-        assertFormat(renderClass(spacing, 0), "class");
+        assertFormat(new ClassRenderer(spacing, 0).render(), new ClassRenderer(0, 0).render());
     }
 
     @ParameterizedTest
     @ValueSource(ints = {0, 1, 2})
     void class_name_format_trailing_whitespace(int spacing) {
-        assertFormat(renderClass(0, spacing), renderClass(0, 0));
+        assertFormat(new ClassRenderer(0, spacing).render(), new ClassRenderer(0, 0).render());
     }
 
     @Test
     void class_name_analyze() {
-        assertAnalyzeError(renderClass(0, 0), path -> new ClassStructureError(renderClass(0, 0)));
+        assertAnalyzeError(new ClassRenderer(0, 0).render(), path -> new ClassStructureError(new ClassRenderer(0, 0).render()));
     }
 
     @ParameterizedTest
     @ValueSource(ints = {0, 1, 2})
     void class_name_analyze_leading_whitespace(int spacing) {
-        assertAnalyzeError(renderClass(spacing, 0), path -> new ClassStructureError(renderClass(0, 0)));
+        assertAnalyzeError(new ClassRenderer(spacing, 0).render(), path -> new ClassStructureError(new ClassRenderer(0, 0).render()));
     }
 
     @ParameterizedTest
     @ValueSource(ints = {0, 1, 2})
     void class_name_analyze_trailing_whitespace(int spacing) {
-        assertAnalyzeError(renderClass(0, spacing), path -> new ClassStructureError(renderClass(0, 0)));
+        assertAnalyzeError(new ClassRenderer(0, spacing).render(), path -> new ClassStructureError(new ClassRenderer(0, 0).render()));
     }
 }
