@@ -1,12 +1,16 @@
 package yace;
 
-public class ClassRenderer implements Renderable {
+public class ClassNode implements Renderable {
     private final int prefix;
     private final int suffix;
 
-    public ClassRenderer(int prefix, int suffix) {
+    public ClassNode(int prefix, int suffix) {
         this.prefix = prefix;
         this.suffix = suffix;
+    }
+
+    public ClassNode() {
+        this(0, 0);
     }
 
     @Override
