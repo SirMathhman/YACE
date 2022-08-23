@@ -20,7 +20,21 @@ public class Application {
     void format(Path source) throws IOException {
         var input = Files.readString(source);
         if (input.length() != 0) {
-            Files.writeString(source, input.strip());
+            String output;
+            var strippedInput = input.strip();
+            if(strippedInput.startsWith("class")) {
+                var name = strippedInput.substring("class".length());
+                var strippedName = name.strip();
+                output = new ClassBuilder()
+                        .setInfix(1)
+                        .setName(strippedName)
+                        .build()
+                        .render();
+            } else {
+                output = strippedInput;
+            }
+
+            Files.writeString(source, output);
         }
     }
 }
