@@ -45,7 +45,7 @@ public class ApplicationTest {
     }
 
     private void assertFormat(int prefixLength, int infixLength, String name) throws IOException {
-        var input = new PackageStatement(prefixLength, infixLength, name).renderPackage();
+        var input = new PackageStatement(new Padding(prefixLength), new Padding(infixLength), name).render();
         var source = working.orElseThrow().resolve("Index.java");
         Files.writeString(source, input);
 
@@ -56,7 +56,7 @@ public class ApplicationTest {
         Files.writeString(source, sourceOutput.get(0) + " " + sourceOutput.get(1));
 
         var output = Files.readString(source);
-        Assertions.assertEquals(new PackageStatement(0, 1, name).renderPackage(), output);
+        Assertions.assertEquals(new PackageStatement(new Padding(0), new Padding(1), name).render(), output);
     }
 
     @ParameterizedTest
