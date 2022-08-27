@@ -8,11 +8,8 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import java.io.IOException;
-import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.SimpleFileVisitor;
-import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Arrays;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -39,11 +36,16 @@ public class ApplicationTest {
     // format, analyze, refactor, compile
     @Test
     void package_format() throws IOException {
-        assertFormat(0, 1);
+        assertFormat(0, 1, "test");
     }
 
-    private void assertFormat(int prefixLength, int infixLength) throws IOException {
-        var input = " ".repeat(prefixLength) + "package" + " ".repeat(infixLength) + "test;";
+    @Test
+    void package_format_name() throws IOException {
+        assertFormat(0, 1, "name");
+    }
+
+    private void assertFormat(int prefixLength, int infixLength, String name) throws IOException {
+        var input = new PackageStatement(prefixLength, infixLength, name).renderPackage();
         var source = working.orElseThrow().resolve("Index.java");
         Files.writeString(source, input);
 
@@ -54,32 +56,18 @@ public class ApplicationTest {
         Files.writeString(source, sourceOutput.get(0) + " " + sourceOutput.get(1));
 
         var output = Files.readString(source);
-        Assertions.assertEquals("package test;", output);
+        Assertions.assertEquals(new PackageStatement(0, 1, name).renderPackage(), output);
     }
 
     @ParameterizedTest
     @ValueSource(ints = {0, 1, 2})
     void package_format_prefix(int prefixLength) throws IOException {
-        assertFormat(prefixLength, 1);
+        assertFormat(prefixLength, 1, "test");
     }
 
     @ParameterizedTest
     @ValueSource(ints = {1, 2})
     void package_format_infix(int infixLength) throws IOException {
-        assertFormat(0, infixLength);
-    }
-
-    private static class DeletingVisitor extends SimpleFileVisitor<Path> {
-        @Override
-        public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
-            Files.delete(dir);
-            return FileVisitResult.CONTINUE;
-        }
-
-        @Override
-        public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-            Files.delete(file);
-            return FileVisitResult.CONTINUE;
-        }
+        assertFormat(0, infixLength, "test");
     }
 }
