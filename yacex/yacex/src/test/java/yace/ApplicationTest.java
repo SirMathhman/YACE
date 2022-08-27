@@ -4,6 +4,8 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import java.io.IOException;
 import java.nio.file.FileVisitResult;
@@ -35,10 +37,27 @@ public class ApplicationTest {
     // format, analyze, refactor, compile
     @Test
     void package_format() throws IOException {
-        var input = "package test;";
-        Files.writeString(working.orElseThrow().resolve("Index.java"), input);
-        var output = Files.readString(working.orElseThrow().resolve("Index.java"));
-        Assertions.assertEquals(input, output);
+        assertFormat(0);
+    }
+
+    private void assertFormat(int prefixCount) throws IOException {
+        var value = "package test;";
+        var input = " ".repeat(prefixCount) + value;
+        var source = working.orElseThrow().resolve("Index.java");
+        Files.writeString(source, input);
+
+        var sourceInput = Files.readString(source);
+        var sourceOutput = sourceInput.strip();
+        Files.writeString(source, sourceOutput);
+
+        var output = Files.readString(source);
+        Assertions.assertEquals(value, output);
+    }
+
+    @ParameterizedTest
+    @ValueSource(ints = {0, 1, 2})
+    void package_format_prefix(int prefixLength) throws IOException {
+        assertFormat(prefixLength);
     }
 
     private static class DeletingVisitor extends SimpleFileVisitor<Path> {
