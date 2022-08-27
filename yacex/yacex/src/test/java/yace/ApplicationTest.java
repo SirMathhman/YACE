@@ -13,7 +13,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.util.Arrays;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class ApplicationTest {
     private Optional<Path> working = Optional.empty();
@@ -37,27 +39,34 @@ public class ApplicationTest {
     // format, analyze, refactor, compile
     @Test
     void package_format() throws IOException {
-        assertFormat(0);
+        assertFormat(0, 1);
     }
 
-    private void assertFormat(int prefixCount) throws IOException {
-        var value = "package test;";
-        var input = " ".repeat(prefixCount) + value;
+    private void assertFormat(int prefixLength, int infixLength) throws IOException {
+        var input = " ".repeat(prefixLength) + "package" + " ".repeat(infixLength) + "test;";
         var source = working.orElseThrow().resolve("Index.java");
         Files.writeString(source, input);
 
         var sourceInput = Files.readString(source);
-        var sourceOutput = sourceInput.strip();
-        Files.writeString(source, sourceOutput);
+        var sourceOutput = Arrays.stream(sourceInput.strip().split(" "))
+                .filter(value -> !value.isBlank())
+                .collect(Collectors.toList());
+        Files.writeString(source, sourceOutput.get(0) + " " + sourceOutput.get(1));
 
         var output = Files.readString(source);
-        Assertions.assertEquals(value, output);
+        Assertions.assertEquals("package test;", output);
     }
 
     @ParameterizedTest
     @ValueSource(ints = {0, 1, 2})
     void package_format_prefix(int prefixLength) throws IOException {
-        assertFormat(prefixLength);
+        assertFormat(prefixLength, 1);
+    }
+
+    @ParameterizedTest
+    @ValueSource(ints = {1, 2})
+    void package_format_infix(int infixLength) throws IOException {
+        assertFormat(0, infixLength);
     }
 
     private static class DeletingVisitor extends SimpleFileVisitor<Path> {
