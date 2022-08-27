@@ -31,6 +31,8 @@ public class ApplicationTest {
         });
     }
 
+    // format, analyze, refactor, compile
+
     @Test
     void test() {
 
