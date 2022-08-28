@@ -56,22 +56,7 @@ public class ApplicationTest {
     }
 
     private void run() throws ApplicationException {
-        String input;
-        try {
-            input = Files.readString(resolveSource());
-        } catch (IOException e) {
-            throw new ApplicationException(e);
-        }
-
-        if (input.isEmpty()) {
-            throw new EmptyFileException();
-        } else {
-            try {
-                Files.createFile(resolveTarget());
-            } catch (IOException e) {
-                throw new ApplicationException(e);
-            }
-        }
+        new Application(resolveSource(), resolveTarget()).run();
     }
 
     private Path resolveSource() {
