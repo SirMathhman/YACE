@@ -35,9 +35,24 @@ public class ApplicationTest {
     }
 
     @Test
-    void valid() throws ApplicationException, IOException {
+    void valid_no_exception() throws IOException {
+        writeSource();
+        Assertions.assertDoesNotThrow(this::run);
+    }
+
+    private void writeSource() throws IOException {
         Files.writeString(resolveSource(), "class Test {}");
+    }
+
+    @Test
+    void valid_generates_target() throws IOException, ApplicationException {
+        writeSource();
         run();
+        Assertions.assertTrue(Files.exists(resolveTarget()));
+    }
+
+    private Path resolveTarget() {
+        return working.orElseThrow().resolve("Index.mgs");
     }
 
     private void run() throws ApplicationException {
@@ -48,8 +63,14 @@ public class ApplicationTest {
             throw new ApplicationException(e);
         }
 
-        if(input.isEmpty()) {
+        if (input.isEmpty()) {
             throw new EmptyFileException();
+        } else {
+            try {
+                Files.createFile(resolveTarget());
+            } catch (IOException e) {
+                throw new ApplicationException(e);
+            }
         }
     }
 
