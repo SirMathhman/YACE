@@ -31,8 +31,29 @@ public class ApplicationTest {
 
     @Test
     void invalid() {
-        Assertions.assertThrows(EmptyFileException.class, () -> {
+        Assertions.assertThrows(EmptyFileException.class, this::run);
+    }
+
+    @Test
+    void valid() throws ApplicationException, IOException {
+        Files.writeString(resolveSource(), "class Test {}");
+        run();
+    }
+
+    private void run() throws ApplicationException {
+        String input;
+        try {
+            input = Files.readString(resolveSource());
+        } catch (IOException e) {
+            throw new ApplicationException(e);
+        }
+
+        if(input.isEmpty()) {
             throw new EmptyFileException();
-        });
+        }
+    }
+
+    private Path resolveSource() {
+        return working.orElseThrow().resolve("Index.java");
     }
 }
