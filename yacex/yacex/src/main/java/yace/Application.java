@@ -26,21 +26,27 @@ public class Application {
      * @throws ApplicationException If an error occurred.
      */
     void run() throws ApplicationException {
-        String input;
-        try {
-            input = Files.readString(source);
-        } catch (IOException e1) {
-            throw new ApplicationException(e1);
-        }
-
+        var input = readSource();
         if (input.isEmpty()) {
             throw new EmptyFileException();
         } else {
-            try {
-                Files.createFile(target);
-            } catch (IOException e) {
-                throw new ApplicationException(e);
-            }
+            writeTarget();
+        }
+    }
+
+    private String readSource() throws ApplicationException {
+        try {
+            return Files.readString(source);
+        } catch (IOException e) {
+            throw new ApplicationException(e);
+        }
+    }
+
+    private void writeTarget() throws ApplicationException {
+        try {
+            Files.createFile(target);
+        } catch (IOException e) {
+            throw new ApplicationException(e);
         }
     }
 }
