@@ -1,7 +1,6 @@
 package yace;
 
 import java.io.IOException;
-import java.nio.file.Path;
 import java.util.stream.Stream;
 
 /**
@@ -9,14 +8,16 @@ import java.util.stream.Stream;
  */
 public interface Gateway {
     /**
-     * Streams all the sources present.
-     *
-     * @return The sources.
+     * Writes a module to this gateway.
+     * @param module The module.
+     * @throws IOException If this module could not be written.
      */
-    Stream<Path> streamSources1() throws IOException;
+    void write(Module module) throws IOException;
 
-    default Stream<Module> streamSources() throws IOException {
-        return streamSources1()
-                .map(Module::new);
-    }
+    /**
+     * Streams all the modules present.
+     *
+     * @return The modules.
+     */
+    Stream<Module> read() throws IOException;
 }

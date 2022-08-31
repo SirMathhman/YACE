@@ -15,10 +15,9 @@ class DirectoryGatewayTest extends FileTest {
     void collectSources() throws IOException {
         var first = createSource("First");
         var second = createSource("Second");
-        var expected = Set.of(first, second);
+        var expected = Set.of(new Module(first), new Module(second));
         var actual = new DirectoryGateway(working.orElseThrow())
-                .streamSources1()
-                .collect(Collectors.toSet());
+                .read().collect(Collectors.toSet());
 
         assertTrue(expected.containsAll(actual));
         assertTrue(actual.containsAll(expected));

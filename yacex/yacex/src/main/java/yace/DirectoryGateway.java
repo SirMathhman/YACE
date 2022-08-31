@@ -20,8 +20,17 @@ public class DirectoryGateway implements Gateway {
         this.root = root;
     }
 
-    @Override
-    public Stream<Path> streamSources1() throws IOException {
+    private Stream<Path> streamPaths() throws IOException {
         return Files.list(root);
+    }
+
+    @Override
+    public void write(Module module) throws IOException {
+        Files.createFile(module.getPath());
+    }
+
+    @Override
+    public Stream<Module> read() throws IOException {
+        return streamPaths().map(Module::new);
     }
 }

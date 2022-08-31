@@ -1,7 +1,6 @@
 package yace;
 
 import java.io.IOException;
-import java.nio.file.Files;
 
 /**
  * The main class for the application.
@@ -18,10 +17,10 @@ public class Application {
         this.gateway = gateway;
     }
 
-    private static void createTarget(Module source, String name) {
+    private void createTarget(Module source, String name) {
         try {
             var target = source.resolveSibling(name + ".mgs");
-            Files.createFile(target.getPath());
+            gateway.write(target);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -33,7 +32,7 @@ public class Application {
      * @throws IOException If an error happened.
      */
     void run() throws IOException {
-        gateway.streamSources().forEach(module -> {
+        gateway.read().forEach(module -> {
             var fileNameWithoutExtension = module.computeName();
             createTarget(module, fileNameWithoutExtension);
         });
