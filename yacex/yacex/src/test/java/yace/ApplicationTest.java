@@ -9,6 +9,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Optional;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
+
 public class ApplicationTest {
     private Optional<Path> workingDirectory = Optional.empty();
 
@@ -29,7 +31,7 @@ public class ApplicationTest {
     }
 
     @Test
-    void test() {
-
+    void generates_no_target() {
+        assertFalse(Files.exists(workingDirectory.orElseThrow().resolve("Index.java")));
     }
 }
