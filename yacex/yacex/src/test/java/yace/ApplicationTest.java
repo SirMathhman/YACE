@@ -10,6 +10,7 @@ import java.nio.file.Path;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ApplicationTest {
     private Optional<Path> workingDirectory = Optional.empty();
@@ -32,6 +33,33 @@ public class ApplicationTest {
 
     @Test
     void generates_no_target() {
-        assertFalse(Files.exists(workingDirectory.orElseThrow().resolve("Index.java")));
+        assertFalse(Files.exists(resolveTarget()));
+    }
+
+    @Test
+    void generate_target() throws IOException {
+        Files.createFile(resolveSource());
+        var target = resolveTarget();
+        run(target);
+
+        assertTrue(Files.exists(target));
+    }
+
+    private void run(Path target) throws IOException {
+        if (Files.exists(resolveSource())) {
+            Files.createFile(target);
+        }
+    }
+
+    private Path resolveSource() {
+        return resolveFromWorking("Index.mgs");
+    }
+
+    private Path resolveFromWorking(String other) {
+        return workingDirectory.orElseThrow().resolve(other);
+    }
+
+    private Path resolveTarget() {
+        return resolveFromWorking("Index.java");
     }
 }
