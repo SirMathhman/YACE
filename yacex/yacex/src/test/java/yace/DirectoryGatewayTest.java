@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -15,7 +16,10 @@ class DirectoryGatewayTest extends FileTest {
         var first = createSource("First");
         var second = createSource("Second");
         var expected = Set.of(first, second);
-        var actual = new DirectoryGateway(working.orElseThrow()).collectSources();
+        var actual = new DirectoryGateway(working.orElseThrow())
+                .streamSources()
+                .collect(Collectors.toSet());
+
         assertTrue(expected.containsAll(actual));
         assertTrue(actual.containsAll(expected));
     }

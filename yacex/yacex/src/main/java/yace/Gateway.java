@@ -1,15 +1,17 @@
 package yace;
 
+import java.io.IOException;
 import java.nio.file.Path;
-import java.util.Set;
+import java.util.stream.Stream;
 
 /**
  * Represents an object which offers passage between code and an external I/O system.
  */
 public interface Gateway {
     /**
-     * Collects all the sources present.
+     * Streams all the sources present.
+     *
      * @return The sources.
      */
-    Set<Path> collectSources();
+    Stream<Path> streamSources() throws IOException;
 }

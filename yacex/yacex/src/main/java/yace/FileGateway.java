@@ -2,8 +2,7 @@ package yace;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.stream.Stream;
 
 /**
  * <p>
@@ -11,7 +10,7 @@ import java.util.Set;
  * using a single file location.
  * If the file location is empty,
  * then an empty stream is returned
- * when calling {@link #collectSources()}.
+ * when calling {@link #streamSources()}.
  * Otherwise, the file is present.
  * </p>
  */
@@ -27,11 +26,11 @@ public class FileGateway implements Gateway {
     }
 
     @Override
-    public Set<Path> collectSources() {
-        var sources = new HashSet<Path>();
+    public Stream<Path> streamSources() {
         if (Files.exists(source)) {
-            sources.add(source);
+            return Stream.of(source);
+        } else {
+            return Stream.empty();
         }
-        return sources;
     }
 }
