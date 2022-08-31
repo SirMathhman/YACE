@@ -13,10 +13,11 @@ public class Application {
 
     /**
      * Constructs a new Application using the given paths.
+     *
      * @param source The source file.
      * @param target The target/destination file.
      */
-    public Application(Path target, Path source) {
+    public Application(Path source, Path target) {
         this.target = target;
         this.source = source;
     }
