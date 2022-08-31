@@ -40,7 +40,7 @@ public class ApplicationTest {
     void generate_target() throws IOException {
         Files.createFile(resolveSource());
         var target = resolveTarget();
-        new Application(resolveSource()).run();
+        new Application(new FileGateway(resolveSource())).run();
         assertTrue(Files.exists(target));
     }
 

@@ -2,21 +2,20 @@ package yace;
 
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Path;
 
 /**
  * The main class for the application.
  */
 public class Application {
-    private final Path source;
+    private final Gateway gateway;
 
     /**
-     * Constructs a new Application using the given paths.
+     * Constructs a new Application using the given gateway.
      *
-     * @param source The source file.
+     * @param gateway The gateway.
      */
-    public Application(Path source) {
-        this.source = source;
+    public Application(Gateway gateway) {
+        this.gateway = gateway;
     }
 
     /**
@@ -25,11 +24,14 @@ public class Application {
      * @throws IOException If an error happened.
      */
     void run() throws IOException {
-        if (Files.exists(source)) {
+        var sources = gateway.collectSources();
+
+        for (var source : sources) {
             var fileName = source.getFileName().toString();
             var extensionSeparator = fileName.indexOf('.');
             var fileNameWithoutExtension = fileName.substring(0, extensionSeparator);
             Files.createFile(source.resolveSibling(fileNameWithoutExtension + ".mgs"));
         }
     }
+
 }
