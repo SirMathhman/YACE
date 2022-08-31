@@ -40,12 +40,12 @@ public class ApplicationTest {
     void generate_target() throws IOException {
         Files.createFile(resolveSource());
         var target = resolveTarget();
-        new Application(resolveSource(), target).run();
+        new Application(resolveSource()).run();
         assertTrue(Files.exists(target));
     }
 
     private Path resolveSource() {
-        return resolveFromWorking("Index.mgs");
+        return resolveFromWorking("Index.java");
     }
 
     private Path resolveFromWorking(String other) {
@@ -53,6 +53,6 @@ public class ApplicationTest {
     }
 
     private Path resolveTarget() {
-        return resolveFromWorking("Index.java");
+        return resolveFromWorking("Index.mgs");
     }
 }
