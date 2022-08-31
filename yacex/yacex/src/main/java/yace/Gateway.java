@@ -13,5 +13,10 @@ public interface Gateway {
      *
      * @return The sources.
      */
-    Stream<Path> streamSources() throws IOException;
+    Stream<Path> streamSources1() throws IOException;
+
+    default Stream<Module> streamSources() throws IOException {
+        return streamSources1()
+                .map(Module::new);
+    }
 }

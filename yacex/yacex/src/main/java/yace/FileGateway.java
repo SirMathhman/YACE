@@ -10,7 +10,7 @@ import java.util.stream.Stream;
  * using a single file location.
  * If the file location is empty,
  * then an empty stream is returned
- * when calling {@link #streamSources()}.
+ * when calling {@link #streamSources1()}.
  * Otherwise, the file is present.
  * </p>
  */
@@ -26,7 +26,7 @@ public class FileGateway implements Gateway {
     }
 
     @Override
-    public Stream<Path> streamSources() {
+    public Stream<Path> streamSources1() {
         if (Files.exists(source)) {
             return Stream.of(source);
         } else {

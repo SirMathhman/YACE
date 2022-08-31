@@ -21,7 +21,7 @@ public class DirectoryGateway implements Gateway {
     }
 
     @Override
-    public Stream<Path> streamSources() throws IOException {
+    public Stream<Path> streamSources1() throws IOException {
         return Files.list(root);
     }
 }

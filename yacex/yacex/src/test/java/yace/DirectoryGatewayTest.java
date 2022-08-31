@@ -17,7 +17,7 @@ class DirectoryGatewayTest extends FileTest {
         var second = createSource("Second");
         var expected = Set.of(first, second);
         var actual = new DirectoryGateway(working.orElseThrow())
-                .streamSources()
+                .streamSources1()
                 .collect(Collectors.toSet());
 
         assertTrue(expected.containsAll(actual));
