@@ -40,15 +40,8 @@ public class ApplicationTest {
     void generate_target() throws IOException {
         Files.createFile(resolveSource());
         var target = resolveTarget();
-        run(target);
-
+        new Application(target, resolveSource()).run();
         assertTrue(Files.exists(target));
-    }
-
-    private void run(Path target) throws IOException {
-        if (Files.exists(resolveSource())) {
-            Files.createFile(target);
-        }
     }
 
     private Path resolveSource() {
