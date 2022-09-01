@@ -5,9 +5,10 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Collections;
+import java.util.Set;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ApplicationTest extends FileTest {
 
@@ -17,11 +18,26 @@ public class ApplicationTest extends FileTest {
     }
 
     @Test
+    void generate_proper_target() throws IOException {
+        var source = resolveSource();
+        Files.createFile(source);
+
+        var expected = Collections.singleton(resolveTarget());
+        var actual = new Application(new FileGateway(source)).run();
+        assertEquals(1, actual.size());
+        assertEquals(first(expected), first(actual));
+    }
+
+    private static Path first(Set<Path> actual) {
+        return actual.stream().findFirst().orElseThrow();
+    }
+
+    @Test
     void generate_target() throws IOException {
-        Files.createFile(resolveSource());
-        var target = resolveTarget();
-        new Application(new FileGateway(resolveSource())).run();
-        assertTrue(Files.exists(target));
+        var source = resolveSource();
+        Files.createFile(source);
+        new Application(new FileGateway(source)).run();
+        assertTrue(Files.exists(resolveTarget()));
     }
 
     private Path resolveSource() {

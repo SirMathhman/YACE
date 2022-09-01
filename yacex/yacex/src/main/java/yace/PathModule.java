@@ -11,13 +11,18 @@ import java.util.stream.Stream;
 public class PathModule implements Module {
     private final Path path;
 
-    /**
-     * The path to the file.
-     *
-     * @param path The path.
-     */
-    public PathModule(Path path) {
+    private PathModule(Path path) {
         this.path = path;
+    }
+
+    /**
+     * Constructs a new PathModule from a working directory and a path.
+     *
+     * @param working The working directory of the module.
+     * @param path    The location of the module.
+     */
+    public static Module createFromAbsolute(Path working, Path path) {
+        return new PathModule(working.relativize(path));
     }
 
     @Override

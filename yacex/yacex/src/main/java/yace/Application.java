@@ -2,6 +2,8 @@ package yace;
 
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * The main class for the application.
@@ -18,10 +20,10 @@ public class Application {
         this.gateway = gateway;
     }
 
-    private void createTarget(Module source, String name) {
+    private Path createTarget(Module source, String name) {
         try {
             var target = source.resolveSibling(name + ".mgs");
-            gateway.write(target, "mgs");
+            return gateway.write(target, "mgs");
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -30,12 +32,13 @@ public class Application {
     /**
      * Actually runs the application.
      *
+     * @return The target files created.
      * @throws IOException If an error happened.
      */
-    void run() throws IOException {
-        gateway.read().forEach(module -> {
+    Set<Path> run() throws IOException {
+        return gateway.read().map(module -> {
             var fileNameWithoutExtension = module.computeName();
-            createTarget(module, fileNameWithoutExtension);
-        });
+            return createTarget(module, fileNameWithoutExtension);
+        }).collect(Collectors.toSet());
     }
 }

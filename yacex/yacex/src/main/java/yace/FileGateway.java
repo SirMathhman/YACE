@@ -34,7 +34,7 @@ public class FileGateway extends PathGateway {
     @Override
     public Stream<Module> read() {
         return Files.exists(source) ?
-                Stream.of(new PathModule(source)) :
+                Stream.of(PathModule.createFromAbsolute(source.getParent(), source)) :
                 Stream.empty();
     }
 }

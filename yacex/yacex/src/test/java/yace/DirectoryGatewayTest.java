@@ -16,12 +16,16 @@ class DirectoryGatewayTest extends FileTest {
     void read() throws IOException {
         var first = createSource("First");
         var second = createSource("Second");
-        var expected = Set.<Module>of(new PathModule(first), new PathModule(second));
-        var actual = createGateway()
-                .read().collect(Collectors.toSet());
+        var expected = Set.of(createModuleImpl(first), createModuleImpl(second));
+        var actual = createGateway().read()
+                .collect(Collectors.toSet());
 
         assertTrue(expected.containsAll(actual));
         assertTrue(actual.containsAll(expected));
+    }
+
+    private Module createModuleImpl(Path first) {
+        return PathModule.createFromAbsolute(working.orElseThrow(), first);
     }
 
     private PathGateway createGateway() {
