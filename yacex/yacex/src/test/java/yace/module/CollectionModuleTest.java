@@ -1,4 +1,4 @@
-package yace;
+package yace.module;
 
 import org.junit.jupiter.api.Test;
 

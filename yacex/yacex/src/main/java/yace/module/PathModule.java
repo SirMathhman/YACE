@@ -1,4 +1,4 @@
-package yace;
+package yace.module;
 
 import java.nio.file.Path;
 import java.util.Objects;

@@ -1,6 +1,7 @@
 package yace;
 
 import org.junit.jupiter.api.Test;
+import yace.gateway.FileGateway;
 
 import java.io.IOException;
 import java.nio.file.Files;

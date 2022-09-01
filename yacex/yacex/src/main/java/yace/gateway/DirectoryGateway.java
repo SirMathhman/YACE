@@ -1,4 +1,7 @@
-package yace;
+package yace.gateway;
+
+import yace.module.Module;
+import yace.module.PathModule;
 
 import java.io.IOException;
 import java.nio.file.Files;

@@ -1,4 +1,4 @@
-package yace;
+package yace.module;
 
 import java.util.stream.Stream;
 
