@@ -8,24 +8,37 @@ import java.nio.file.Path;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class DirectoryGatewayTest extends FileTest {
     @Test
-    void collectSources() throws IOException {
+    void read() throws IOException {
         var first = createSource("First");
         var second = createSource("Second");
-        var expected = Set.of(new Module(first), new Module(second));
-        var actual = new DirectoryGateway(working.orElseThrow())
+        var expected = Set.<Module>of(new PathModule(first), new PathModule(second));
+        var actual = createGateway()
                 .read().collect(Collectors.toSet());
 
         assertTrue(expected.containsAll(actual));
         assertTrue(actual.containsAll(expected));
     }
 
+    private PathGateway createGateway() {
+        return new DirectoryGateway(working.orElseThrow());
+    }
+
     private Path createSource(String name) throws IOException {
         var path = working.orElseThrow().resolve(String.format("%s.java", name));
         Files.createFile(path);
         return path;
+    }
+
+    @Test
+    void write() throws IOException {
+        var expected = working.orElseThrow().resolve("directory").resolve("File.mgs");
+        var actual = createGateway().write(new CollectionModule("File", "directory"), "mgs");
+        assertEquals(expected, actual);
+        assertTrue(Files.exists(actual));
     }
 }

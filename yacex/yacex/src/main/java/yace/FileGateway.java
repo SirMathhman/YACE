@@ -1,6 +1,5 @@
 package yace;
 
-import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.stream.Stream;
@@ -15,7 +14,7 @@ import java.util.stream.Stream;
  * Otherwise, the file is present.
  * </p>
  */
-public class FileGateway implements Gateway {
+public class FileGateway extends PathGateway {
     private final Path source;
 
     /**
@@ -28,14 +27,14 @@ public class FileGateway implements Gateway {
     }
 
     @Override
-    public void write(Module module) throws IOException {
-        Files.createFile(module.getPath());
+    protected Path computeRoot() {
+        return source.getParent();
     }
 
     @Override
     public Stream<Module> read() {
         return Files.exists(source) ?
-                Stream.of(new Module(source)) :
+                Stream.of(new PathModule(source)) :
                 Stream.empty();
     }
 }
