@@ -4,19 +4,18 @@ import yace.gateway.Gateway;
 import yace.module.Module;
 
 import java.io.IOException;
-import java.nio.file.Path;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
  * The main class for the application.
  */
-public class Application {
-    private final Gateway<Path> source;
-    private final Gateway<Path> target;
+public class Application<T> {
+    private final Gateway<T> source;
+    private final Gateway<T> target;
 
 
-    private Application(Gateway<Path> source, Gateway<Path> target) {
+    private Application(Gateway<T> source, Gateway<T> target) {
         this.source = source;
         this.target = target;
     }
@@ -27,11 +26,11 @@ public class Application {
      *
      * @param gateway The gateway.
      */
-    public static Application fromSingleGateway(Gateway<Path> gateway) {
-        return new Application(gateway, gateway);
+    public static <T> Application<T> fromSingleGateway(Gateway<T> gateway) {
+        return new Application<>(gateway, gateway);
     }
 
-    private Path createTarget(Module source) {
+    private T createTarget(Module source) {
         try {
             var fileName = source.computeName() + ".mgs";
             var target = source.resolveSibling(fileName);
@@ -47,7 +46,7 @@ public class Application {
      * @return The target files created.
      * @throws IOException If an error happened.
      */
-    Set<Path> run() throws IOException {
+    Set<T> run() throws IOException {
         return source.read()
                 .map(this::createTarget)
                 .collect(Collectors.toSet());
