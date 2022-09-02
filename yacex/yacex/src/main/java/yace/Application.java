@@ -37,7 +37,7 @@ public class Application<T> {
         try {
             var input = source.load();
             if (isJava) {
-                if (input.isEmpty()) {
+                if (input.isBlank()) {
                     throw new EmptySourceException("Java source must have class.");
                 }
             }

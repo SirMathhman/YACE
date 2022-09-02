@@ -24,6 +24,11 @@ public class ApplicationTest extends FileTest {
     }
 
     @Test
+    void blankJava() {
+        assertThrows(EmptySourceException.class, () -> runImpl(" ", "java", true));
+    }
+
+    @Test
     void emptyMagma() throws IOException {
         assertEquals("class Index {}", Files.readString(runImpl("mgs", false)
                 .stream()
