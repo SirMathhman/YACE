@@ -20,7 +20,7 @@ public class ApplicationTest extends FileTest {
 
     @Test
     void emptyJava() {
-        assertThrows(EmptySourceException.class, () -> runImpl("java", true));
+        assertThrows(EmptySourceException.class, () -> runImpl("", "java", true));
     }
 
     @Test
@@ -30,7 +30,16 @@ public class ApplicationTest extends FileTest {
 
     @Test
     void emptyMagma() throws IOException {
-        assertEquals("class Index {}", Files.readString(runImpl("mgs", false)
+        assertCompile("");
+    }
+
+    @Test
+    void blankMagma() throws IOException {
+        assertCompile(" ");
+    }
+
+    private void assertCompile(String input) throws IOException {
+        assertEquals("class Index {}", Files.readString(runImpl(input, "mgs", false)
                 .stream()
                 .findFirst()
                 .orElseThrow()));
@@ -51,10 +60,6 @@ public class ApplicationTest extends FileTest {
 
     private Set<Path> runWithEmptyClass() throws IOException {
         return runImpl(String.format("class %s {}", CLASS_NAME), "java", true);
-    }
-
-    private Set<Path> runImpl(String extension, boolean isJava) throws IOException {
-        return runImpl("", extension, isJava);
     }
 
     private Set<Path> runImpl(String input, String extension, boolean isJava) throws IOException {
