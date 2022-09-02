@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 public class Application<T> {
     private final Gateway<T> sourceGateway;
     private final Gateway<T> target;
-    private boolean isJava;
+    private final boolean isJava;
 
 
     private Application(Gateway<T> sourceGateway, Gateway<T> target, boolean isJava) {
