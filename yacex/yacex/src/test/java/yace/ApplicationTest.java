@@ -18,7 +18,7 @@ public class ApplicationTest extends FileTest {
 
     @Test
     void empty() {
-        assertThrows(CompileException.class, this::runImpl);
+        assertThrows(EmptySourceException.class, this::runImpl);
     }
 
     @Test

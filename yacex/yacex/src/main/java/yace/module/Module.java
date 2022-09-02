@@ -1,5 +1,6 @@
 package yace.module;
 
+import java.io.IOException;
 import java.util.stream.Stream;
 
 /**
@@ -33,4 +34,11 @@ public interface Module {
      * @return The name.
      */
     String computeName();
+
+    /**
+     * Reads the content of this module.
+     * @return The content of this module.
+     * @throws IOException If the content couldn't be read.
+     */
+    String read() throws IOException;
 }

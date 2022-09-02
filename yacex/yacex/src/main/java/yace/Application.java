@@ -32,6 +32,10 @@ public class Application<T> {
 
     private T compile(Module source) {
         try {
+            var input = source.read();
+            if(input.isEmpty()) {
+                throw new EmptySourceException("Java source must have class.");
+            }
             return this.target.write(source, "mgs");
         } catch (IOException e) {
             throw new RuntimeException(e);

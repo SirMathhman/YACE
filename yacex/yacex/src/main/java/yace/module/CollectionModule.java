@@ -51,4 +51,9 @@ public class CollectionModule implements Module {
     public String computeName() {
         return name;
     }
+
+    @Override
+    public String read() {
+        throw new UnsupportedOperationException("No content available.");
+    }
 }
