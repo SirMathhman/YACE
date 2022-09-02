@@ -12,6 +12,14 @@ import java.util.Set;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class ApplicationTest extends FileTest {
+    private static Path first(Set<Path> actual) {
+        return actual.stream().findFirst().orElseThrow();
+    }
+
+    @Test
+    void empty() {
+        assertThrows(CompileException.class, this::runImpl);
+    }
 
     @Test
     void generates_no_target() {
@@ -20,17 +28,17 @@ public class ApplicationTest extends FileTest {
 
     @Test
     void generate_proper_target() throws IOException {
-        var source = resolveSource();
-        Files.createFile(source);
+        var actual = runImpl();
 
         var expected = Collections.singleton(resolveTarget());
-        var actual = Application.fromSingleGateway(new FileGateway(source)).run();
         assertEquals(1, actual.size());
         assertEquals(first(expected), first(actual));
     }
 
-    private static Path first(Set<Path> actual) {
-        return actual.stream().findFirst().orElseThrow();
+    private Set<Path> runImpl() throws IOException {
+        var source = resolveSource();
+        Files.createFile(source);
+        return Application.fromSingleGateway(new FileGateway(source)).run();
     }
 
     @Test
