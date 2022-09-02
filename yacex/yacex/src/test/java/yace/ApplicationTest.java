@@ -63,7 +63,7 @@ public class ApplicationTest extends FileTest {
     }
 
     private Set<Path> runImpl(String input, String extension, boolean isJava) throws IOException {
-        var source = resolveSource(extension);
+        var source = resolveFromWorking(CLASS_NAME + "." + extension);
         Files.writeString(source, input);
         return Application.fromSingleGateway(new FileGateway(source), isJava).run();
     }
@@ -72,10 +72,6 @@ public class ApplicationTest extends FileTest {
     void generate_target() throws IOException {
         runWithEmptyClass();
         assertTrue(Files.exists(resolveTarget()));
-    }
-
-    private Path resolveSource(String extension) {
-        return resolveFromWorking(CLASS_NAME + "." + extension);
     }
 
     private Path resolveFromWorking(String other) {
