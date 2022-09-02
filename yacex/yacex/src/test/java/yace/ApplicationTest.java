@@ -24,7 +24,7 @@ public class ApplicationTest extends FileTest {
         Files.createFile(source);
 
         var expected = Collections.singleton(resolveTarget());
-        var actual = new Application(new FileGateway(source)).run();
+        var actual = Application.fromSingleGateway(new FileGateway(source)).run();
         assertEquals(1, actual.size());
         assertEquals(first(expected), first(actual));
     }
@@ -37,7 +37,7 @@ public class ApplicationTest extends FileTest {
     void generate_target() throws IOException {
         var source = resolveSource();
         Files.createFile(source);
-        new Application(new FileGateway(source)).run();
+        Application.fromSingleGateway(new FileGateway(source)).run();
         assertTrue(Files.exists(resolveTarget()));
     }
 

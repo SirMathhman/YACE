@@ -12,21 +12,29 @@ import java.util.stream.Collectors;
  * The main class for the application.
  */
 public class Application {
-    private final Gateway<Path> gateway;
+    private final Gateway<Path> source;
+    private final Gateway<Path> target;
+
+
+    private Application(Gateway<Path> source, Gateway<Path> target) {
+        this.source = source;
+        this.target = target;
+    }
 
     /**
      * Constructs a new Application using the given gateway.
+     * The gateway will be used as both the source and target gateway.
      *
      * @param gateway The gateway.
      */
-    public Application(Gateway<Path> gateway) {
-        this.gateway = gateway;
+    public static Application fromSingleGateway(Gateway<Path> gateway) {
+        return new Application(gateway, gateway);
     }
 
     private Path createTarget(Module source, String name) {
         try {
             var target = source.resolveSibling(name + ".mgs");
-            return gateway.write(target, "mgs");
+            return this.target.write(target, "mgs");
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -39,7 +47,7 @@ public class Application {
      * @throws IOException If an error happened.
      */
     Set<Path> run() throws IOException {
-        return gateway.read().map(module -> {
+        return source.read().map(module -> {
             var fileNameWithoutExtension = module.computeName();
             return createTarget(module, fileNameWithoutExtension);
         }).collect(Collectors.toSet());
