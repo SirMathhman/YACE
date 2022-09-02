@@ -31,9 +31,10 @@ public class Application {
         return new Application(gateway, gateway);
     }
 
-    private Path createTarget(Module source, String name) {
+    private Path createTarget(Module source) {
         try {
-            var target = source.resolveSibling(name + ".mgs");
+            var fileName = source.computeName() + ".mgs";
+            var target = source.resolveSibling(fileName);
             return this.target.write(target, "mgs");
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -47,9 +48,8 @@ public class Application {
      * @throws IOException If an error happened.
      */
     Set<Path> run() throws IOException {
-        return source.read().map(module -> {
-            var fileNameWithoutExtension = module.computeName();
-            return createTarget(module, fileNameWithoutExtension);
-        }).collect(Collectors.toSet());
+        return source.read()
+                .map(this::createTarget)
+                .collect(Collectors.toSet());
     }
 }
