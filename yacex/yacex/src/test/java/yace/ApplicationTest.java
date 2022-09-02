@@ -12,6 +12,8 @@ import java.util.Set;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class ApplicationTest extends FileTest {
+    public static final String CLASS_NAME = "Index";
+
     private static Path first(Set<Path> actual) {
         return actual.stream().findFirst().orElseThrow();
     }
@@ -28,29 +30,34 @@ public class ApplicationTest extends FileTest {
 
     @Test
     void generate_proper_target() throws IOException {
-        var actual = runImpl();
-
+        var actual = runWithEmptyClass();
         var expected = Collections.singleton(resolveTarget());
         assertEquals(1, actual.size());
         assertEquals(first(expected), first(actual));
     }
 
-    private Set<Path> runImpl() throws IOException {
+    private Set<Path> runWithEmptyClass() throws IOException {
+        return runImpl(String.format("class %s {}", CLASS_NAME));
+    }
+
+    private void runImpl() throws IOException {
+        runImpl("");
+    }
+
+    private Set<Path> runImpl(String input) throws IOException {
         var source = resolveSource();
-        Files.createFile(source);
+        Files.writeString(source, input);
         return Application.fromSingleGateway(new FileGateway(source)).run();
     }
 
     @Test
     void generate_target() throws IOException {
-        var source = resolveSource();
-        Files.createFile(source);
-        Application.fromSingleGateway(new FileGateway(source)).run();
+        runWithEmptyClass();
         assertTrue(Files.exists(resolveTarget()));
     }
 
     private Path resolveSource() {
-        return resolveFromWorking("Index.java");
+        return resolveFromWorking(CLASS_NAME + ".java");
     }
 
     private Path resolveFromWorking(String other) {
@@ -58,6 +65,6 @@ public class ApplicationTest extends FileTest {
     }
 
     private Path resolveTarget() {
-        return resolveFromWorking("Index.mgs");
+        return resolveFromWorking(CLASS_NAME + ".mgs");
     }
 }
