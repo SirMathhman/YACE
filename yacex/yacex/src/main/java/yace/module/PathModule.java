@@ -68,7 +68,17 @@ public class PathModule implements Module {
     }
 
     @Override
-    public String read() throws IOException {
+    public String load() throws IOException {
         return Files.readString(inResolvedForm());
+    }
+
+    @Override
+    public Module detach() {
+        return new CollectionModule(computeName(), streamPackage().toArray(String[]::new));
+    }
+
+    @Override
+    public Module store(String output) {
+        return null;
     }
 }

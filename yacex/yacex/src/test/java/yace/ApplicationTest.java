@@ -19,8 +19,16 @@ public class ApplicationTest extends FileTest {
     }
 
     @Test
-    void empty() {
-        assertThrows(EmptySourceException.class, this::runImpl);
+    void emptyJava() {
+        assertThrows(EmptySourceException.class, () -> runImpl("java", true));
+    }
+
+    @Test
+    void emptyMagma() throws IOException {
+        assertEquals("class Index {}", Files.readString(runImpl("mgs", false)
+                .stream()
+                .findFirst()
+                .orElseThrow()));
     }
 
     @Test
@@ -37,17 +45,17 @@ public class ApplicationTest extends FileTest {
     }
 
     private Set<Path> runWithEmptyClass() throws IOException {
-        return runImpl(String.format("class %s {}", CLASS_NAME));
+        return runImpl(String.format("class %s {}", CLASS_NAME), "java", true);
     }
 
-    private void runImpl() throws IOException {
-        runImpl("");
+    private Set<Path> runImpl(String extension, boolean isJava) throws IOException {
+        return runImpl("", extension, isJava);
     }
 
-    private Set<Path> runImpl(String input) throws IOException {
-        var source = resolveSource();
+    private Set<Path> runImpl(String input, String extension, boolean isJava) throws IOException {
+        var source = resolveSource(extension);
         Files.writeString(source, input);
-        return Application.fromSingleGateway(new FileGateway(source)).run();
+        return Application.fromSingleGateway(new FileGateway(source), isJava).run();
     }
 
     @Test
@@ -56,8 +64,8 @@ public class ApplicationTest extends FileTest {
         assertTrue(Files.exists(resolveTarget()));
     }
 
-    private Path resolveSource() {
-        return resolveFromWorking(CLASS_NAME + ".java");
+    private Path resolveSource(String extension) {
+        return resolveFromWorking(CLASS_NAME + "." + extension);
     }
 
     private Path resolveFromWorking(String other) {

@@ -10,16 +10,23 @@ import java.util.stream.Stream;
 public class CollectionModule implements Module {
     private final String name;
     private final String[] package_;
+    private final String content;
 
     /**
      * Constructs a new module using a given name and package_.
      * The package_ is at the end to enable variable arguments.
-     * @param name The name of the module.
+     *
+     * @param name     The name of the module.
      * @param package_ The package of the module. An empty package is permissible.
      */
     public CollectionModule(String name, String... package_) {
+        this(name, package_, "");
+    }
+
+    public CollectionModule(String name, String[] package_, String content) {
         this.name = name;
         this.package_ = package_;
+        this.content = content;
     }
 
     @Override
@@ -53,7 +60,17 @@ public class CollectionModule implements Module {
     }
 
     @Override
-    public String read() {
-        throw new UnsupportedOperationException("No content available.");
+    public String load() {
+        return content;
+    }
+
+    @Override
+    public Module detach() {
+        return new CollectionModule(name, package_);
+    }
+
+    @Override
+    public Module store(String output) {
+        return new CollectionModule(name, package_, output);
     }
 }

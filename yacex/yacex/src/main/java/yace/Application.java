@@ -13,11 +13,13 @@ import java.util.stream.Collectors;
 public class Application<T> {
     private final Gateway<T> sourceGateway;
     private final Gateway<T> target;
+    private boolean isJava;
 
 
-    private Application(Gateway<T> sourceGateway, Gateway<T> target) {
+    private Application(Gateway<T> sourceGateway, Gateway<T> target, boolean isJava) {
         this.sourceGateway = sourceGateway;
         this.target = target;
+        this.isJava = isJava;
     }
 
     /**
@@ -25,18 +27,23 @@ public class Application<T> {
      * The gateway will be used as both the source and target gateway.
      *
      * @param gateway The gateway.
+     * @param isJava If this application has Java sources.
      */
-    public static <T> Application<T> fromSingleGateway(Gateway<T> gateway) {
-        return new Application<>(gateway, gateway);
+    public static <T> Application<T> fromSingleGateway(Gateway<T> gateway, boolean isJava) {
+        return new Application<>(gateway, gateway, isJava);
     }
 
     private T compile(Module source) {
         try {
-            var input = source.read();
-            if(input.isEmpty()) {
-                throw new EmptySourceException("Java source must have class.");
+            var input = source.load();
+            if (isJava) {
+                if (input.isEmpty()) {
+                    throw new EmptySourceException("Java source must have class.");
+                }
             }
-            return this.target.write(source, "mgs");
+
+            var stored = source.detach().store("class Index {}");
+            return this.target.write(stored, "mgs");
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

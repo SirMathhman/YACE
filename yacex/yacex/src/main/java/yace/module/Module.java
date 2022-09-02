@@ -36,9 +36,22 @@ public interface Module {
     String computeName();
 
     /**
-     * Reads the content of this module.
+     * Loads the content of this module.
      * @return The content of this module.
      * @throws IOException If the content couldn't be read.
      */
-    String read() throws IOException;
+    String load() throws IOException;
+
+    /**
+     * Detatches this module from the underlying resource, or simply returns a copy of itself if it is a virtual object.
+     * @return The detached version.
+     */
+    Module detach();
+
+    /**
+     * Stores the given output in this module.
+     * @param output The output.
+     * @return This same module for chaining.
+     */
+    Module store(String output);
 }

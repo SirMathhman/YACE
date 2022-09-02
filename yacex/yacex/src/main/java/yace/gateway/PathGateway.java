@@ -20,7 +20,7 @@ public abstract class PathGateway implements Gateway<Path> {
         if(!Files.exists(parent)) {
             Files.createDirectories(parent);
         }
-        Files.createFile(path);
+        Files.writeString(path, module.load());
         return path;
     }
 
