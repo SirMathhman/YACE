@@ -21,7 +21,7 @@ class DirectoryGatewayTest extends FileTest {
         var first = createSource("First");
         var second = createSource("Second");
         var expected = Set.of(createModuleImpl(first), createModuleImpl(second));
-        var actual = createGateway().read()
+        var actual = createGateway().stream()
                 .collect(Collectors.toSet());
 
         assertTrue(expected.containsAll(actual));

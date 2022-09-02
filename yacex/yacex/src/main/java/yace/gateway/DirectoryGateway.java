@@ -34,7 +34,7 @@ public class DirectoryGateway extends PathGateway {
     }
 
     @Override
-    public Stream<Module> read() throws IOException {
+    public Stream<Module> stream() throws IOException {
         return streamPaths().map(path -> PathModule.createFromAbsolute(root, path));
     }
 }

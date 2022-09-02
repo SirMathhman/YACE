@@ -24,5 +24,5 @@ public interface Gateway<T> {
      *
      * @return The modules.
      */
-    Stream<Module> read() throws IOException;
+    Stream<Module> stream() throws IOException;
 }

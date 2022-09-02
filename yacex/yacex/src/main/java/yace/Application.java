@@ -11,12 +11,12 @@ import java.util.stream.Collectors;
  * The main class for the application.
  */
 public class Application<T> {
-    private final Gateway<T> source;
+    private final Gateway<T> sourceGateway;
     private final Gateway<T> target;
 
 
-    private Application(Gateway<T> source, Gateway<T> target) {
-        this.source = source;
+    private Application(Gateway<T> sourceGateway, Gateway<T> target) {
+        this.sourceGateway = sourceGateway;
         this.target = target;
     }
 
@@ -30,11 +30,9 @@ public class Application<T> {
         return new Application<>(gateway, gateway);
     }
 
-    private T createTarget(Module source) {
+    private T compile(Module source) {
         try {
-            var fileName = source.computeName() + ".mgs";
-            var target = source.resolveSibling(fileName);
-            return this.target.write(target, "mgs");
+            return this.target.write(source, "mgs");
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -47,8 +45,8 @@ public class Application<T> {
      * @throws IOException If an error happened.
      */
     Set<T> run() throws IOException {
-        return source.read()
-                .map(this::createTarget)
+        return sourceGateway.stream()
+                .map(this::compile)
                 .collect(Collectors.toSet());
     }
 }

@@ -13,7 +13,7 @@ import java.util.stream.Stream;
  * using a single file location.
  * If the file location is empty,
  * then an empty stream is returned
- * when calling {@link #read()}.
+ * when calling {@link #stream()}.
  * Otherwise, the file is present.
  * </p>
  */
@@ -35,7 +35,7 @@ public class FileGateway extends PathGateway {
     }
 
     @Override
-    public Stream<Module> read() {
+    public Stream<Module> stream() {
         return Files.exists(source) ?
                 Stream.of(PathModule.createFromAbsolute(source.getParent(), source)) :
                 Stream.empty();
