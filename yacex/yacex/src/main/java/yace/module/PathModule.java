@@ -15,7 +15,7 @@ public class PathModule implements Module {
     private final Path parent;
     private final Path child;
 
-    private PathModule(Path parent, Path child) {
+    public PathModule(Path parent, Path child) {
         this.parent = parent;
         this.child = child;
     }
@@ -36,7 +36,7 @@ public class PathModule implements Module {
 
     @Override
     public Stream<String> streamPackage() {
-        var value = inResolvedForm();
+        var value = parent.relativize(child);
         return IntStream.range(0, value.getNameCount() - 1)
                 .mapToObj(value::getName)
                 .map(Path::toString);
