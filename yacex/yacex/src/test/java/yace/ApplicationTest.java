@@ -19,7 +19,17 @@ public class ApplicationTest extends FileTest {
     }
 
     @Test
-    void emptyJava() {
+    void javaEmptyFormat() {
+
+    }
+
+    @Test
+    void javaEmptyAnalyze() {
+
+    }
+
+    @Test
+    void javaEmptyCompile() {
         assertThrows(EmptySourceException.class, () -> runImpl("", "java", true));
     }
 
