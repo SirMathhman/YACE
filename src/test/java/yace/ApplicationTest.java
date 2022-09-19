@@ -43,10 +43,19 @@ public class ApplicationTest {
         Assertions.assertTrue(Files.exists(resolveTarget()));
     }
 
-    private void run() throws IOException {
+    @Test
+    void generates_proper_target() throws IOException {
+        Files.createFile(resolveSource());
+        Assertions.assertEquals(resolveTarget(), run().orElseThrow());
+    }
+
+    private Optional<Path> run() throws IOException {
         if (Files.exists(resolveSource())) {
-            Files.createFile(resolveTarget());
+            var target = resolveTarget();
+            Files.createFile(target);
+            return Optional.of(target);
         }
+        return Optional.empty();
     }
 
     private Path resolveSource() {
