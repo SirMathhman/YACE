@@ -31,17 +31,22 @@ public class ApplicationTest {
     }
 
     @Test
-    void does_not_generate_target() {
+    void does_not_generate_target() throws IOException {
+        run();
         Assertions.assertFalse(Files.exists(resolveTarget()));
     }
 
     @Test
     void generates_target() throws IOException {
         Files.createFile(resolveSource());
+        run();
+        Assertions.assertTrue(Files.exists(resolveTarget()));
+    }
+
+    private void run() throws IOException {
         if (Files.exists(resolveSource())) {
             Files.createFile(resolveTarget());
         }
-        Assertions.assertTrue(Files.exists(resolveTarget()));
     }
 
     private Path resolveSource() {
