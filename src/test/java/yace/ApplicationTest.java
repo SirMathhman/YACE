@@ -31,8 +31,29 @@ public class ApplicationTest {
     }
 
     @Test
-    void test(){
-        Assertions.assertFalse(Files.exists(working.orElseThrow().resolve("Index.mgs")));
+    void does_not_generate_target() {
+        Assertions.assertFalse(Files.exists(resolveTarget()));
+    }
+
+    @Test
+    void generates_target() throws IOException {
+        Files.createFile(resolveSource());
+        if (Files.exists(resolveSource())) {
+            Files.createFile(resolveTarget());
+        }
+        Assertions.assertTrue(Files.exists(resolveTarget()));
+    }
+
+    private Path resolveSource() {
+        return resolveFromWorking("Index.java");
+    }
+
+    private Path resolveFromWorking(String other) {
+        return working.orElseThrow().resolve(other);
+    }
+
+    private Path resolveTarget() {
+        return resolveFromWorking("Index.mgs");
     }
 
     private static class DeletingVisitor extends SimpleFileVisitor<Path> {
