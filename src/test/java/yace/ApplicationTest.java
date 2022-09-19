@@ -1,14 +1,17 @@
 package yace;
 
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import java.io.IOException;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ApplicationTest {
     @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
@@ -33,20 +36,41 @@ public class ApplicationTest {
     @Test
     void does_not_generate_target() throws IOException {
         run();
-        Assertions.assertFalse(Files.exists(resolveTarget()));
+        assertFalse(Files.exists(resolveTarget()));
     }
 
     @Test
     void generates_target() throws IOException {
-        Files.createFile(resolveSource());
-        run();
-        Assertions.assertTrue(Files.exists(resolveTarget()));
+        createAndRun("");
+        assertTrue(Files.exists(resolveTarget()));
     }
 
     @Test
     void generates_proper_target() throws IOException {
-        Files.createFile(resolveSource());
-        Assertions.assertEquals(resolveTarget(), run().orElseThrow());
+        var value = createAndRun("");
+        assertEquals(resolveTarget(), value);
+    }
+
+    private Path createAndRun(String input) throws IOException {
+        Files.writeString(resolveSource(), input);
+        return run().orElseThrow();
+    }
+
+    @Test
+    void empty() throws IOException {
+        createAndRun("");
+        assertTargetIsEmpty();
+    }
+
+    @ParameterizedTest
+    @ValueSource(ints = {0, 1, 2})
+    void whitespace(int length) throws IOException {
+        createAndRun(" ".repeat(length));
+        assertTargetIsEmpty();
+    }
+
+    private void assertTargetIsEmpty() throws IOException {
+        assertTrue(Files.readString(resolveTarget()).isEmpty());
     }
 
     private Optional<Path> run() throws IOException {
