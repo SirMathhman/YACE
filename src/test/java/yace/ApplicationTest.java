@@ -35,7 +35,7 @@ public class ApplicationTest {
 
     @Test
     void does_not_generate_target() throws IOException {
-        run();
+        new Application(resolveSource(), resolveTarget()).run();
         assertFalse(Files.exists(resolveTarget()));
     }
 
@@ -53,7 +53,7 @@ public class ApplicationTest {
 
     private Path createAndRun(String input) throws IOException {
         Files.writeString(resolveSource(), input);
-        return run().orElseThrow();
+        return new Application(resolveSource(), resolveTarget()).run().orElseThrow();
     }
 
     @Test
@@ -71,15 +71,6 @@ public class ApplicationTest {
 
     private void assertTargetIsEmpty() throws IOException {
         assertTrue(Files.readString(resolveTarget()).isEmpty());
-    }
-
-    private Optional<Path> run() throws IOException {
-        if (Files.exists(resolveSource())) {
-            var target = resolveTarget();
-            Files.createFile(target);
-            return Optional.of(target);
-        }
-        return Optional.empty();
     }
 
     private Path resolveSource() {
