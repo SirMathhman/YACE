@@ -4,3 +4,4 @@ project(YACE C)
 set(CMAKE_C_STANDARD 99)
 
 add_executable(YACE main.c)
+add_executable(YACE_Test test.c)
