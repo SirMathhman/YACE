@@ -26,14 +26,20 @@ class ApplicationTest {
     }
 
     @Test
-    fun generates_correct_target(){
+    fun generates_correct_target() {
         Files.createFile(resolveSource())
-        assertEquals(resolveTarget(), run())
+        assertEquals(resolveMagmaFile("Index"), run())
     }
 
     private fun run(): Path? {
-        if (Files.exists(resolveSource())) {
-            val target = resolveTarget()
+        val source = resolveSource()
+        if (Files.exists(source)) {
+            val nameCount = source.nameCount
+            val lastIndex = nameCount - 1
+            val lastValueWithSeparator = source.getName(lastIndex).toString()
+            val separator = lastValueWithSeparator.indexOf('.')
+            val lastValue = lastValueWithSeparator.substring(0, separator)
+            val target = resolveMagmaFile(lastValue)
             Files.createFile(target)
             return target
         }
@@ -48,7 +54,7 @@ class ApplicationTest {
         assertFalse(doesTargetExist())
     }
 
-    private fun doesTargetExist() = Files.exists(resolveTarget())
+    private fun doesTargetExist() = Files.exists(resolveMagmaFile("Index"))
 
-    private fun resolveTarget(): Path = working.resolve("Index.mgs")
+    private fun resolveMagmaFile(name: String): Path = working.resolve("$name.mgs")
 }
