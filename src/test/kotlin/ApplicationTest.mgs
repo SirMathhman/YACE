@@ -1,0 +1,51 @@
+import java.nio.file.        { File, Path }
+import org.junit.jupiter.api.{ AfterEach, Assertions.*, BeforeEach, Test}
+
+class def ApplicationTest => {
+    private var working: Option[Path] = None
+
+    #[BeforeEach]
+    def setUp() => working = Files.createTempDirectory("working")
+
+    #[AfterEach]
+    def tearDown() => Files.walkFileTree(&working, DeletingVisitor)
+
+    @Test
+    def generates_target() {
+        Files.createFile(resolveSource())
+        run()
+        assertTrue(doesTargetExist())
+    }
+
+    @Test
+    def generates_correct_target() {
+        Files.createFile(resolveSource())
+        assertEquals(resolveMagmaFile("Index"), run().unwrap())
+    }
+
+    private def run(): Option[Path] {
+        val source = resolveSource()
+        if (Files.exists(source)) {
+            val nameCount = source.nameCount
+            val lastIndex = nameCount - 1
+            val lastValueWithSeparator = source.getName(lastIndex).toString()
+            val separator = lastValueWithSeparator.indexOf('.')
+            val lastValue = lastValueWithSeparator.substring(0, separator)
+            val target = resolveMagmaFile(lastValue)
+            Files.createFile(target)
+            return target
+        }
+        return None
+    }
+
+    private def resolveSource = working.resolve("Index.kt")
+
+    @Test
+    fun generates_no_target => {
+        run()
+        assertFalse(doesTargetExist())
+    }
+
+    private fun doesTargetExist = Files.exists(resolveMagmaFile("Index"))
+    private fun resolveMagmaFile(name: String): Path = working.resolve("$name.mgs")
+}
