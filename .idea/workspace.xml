@@ -4,7 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="74e37aa4-e05b-4deb-940f-e0f528e6cefe" name="Changes" comment="Add basic test">
+    <list default="true" id="74e37aa4-e05b-4deb-940f-e0f528e6cefe" name="Changes" comment="Generate target with different name other than Index">
+      <change afterPath="$PROJECT_DIR$/src/test/kotlin/Application.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/test/kotlin/PathGateway.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/test/kotlin/ApplicationTest.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/kotlin/ApplicationTest.kt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -154,7 +157,7 @@
       <option name="presentableId" value="Default" />
       <updated>1673469561274</updated>
       <workItem from="1673469563275" duration="237000" />
-      <workItem from="1673469880008" duration="3005000" />
+      <workItem from="1673469880008" duration="3788000" />
     </task>
     <task id="LOCAL-00001" summary="Replace with update">
       <created>1673469588298</created>
@@ -205,7 +208,14 @@
       <option name="project" value="LOCAL" />
       <updated>1673472603167</updated>
     </task>
-    <option name="localTasksCounter" value="8" />
+    <task id="LOCAL-00008" summary="Generate target with different name other than Index">
+      <created>1673472927826</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1673472927826</updated>
+    </task>
+    <option name="localTasksCounter" value="9" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -229,6 +239,7 @@
     <MESSAGE value="Add proper target generation" />
     <MESSAGE value="Remove duplicate information" />
     <MESSAGE value="Add basic test" />
-    <option name="LAST_COMMIT_MESSAGE" value="Add basic test" />
+    <MESSAGE value="Generate target with different name other than Index" />
+    <option name="LAST_COMMIT_MESSAGE" value="Generate target with different name other than Index" />
   </component>
 </project>
