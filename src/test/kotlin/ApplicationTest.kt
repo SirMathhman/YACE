@@ -1,6 +1,5 @@
 import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.Assertions.assertFalse
-import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.nio.file.Files
@@ -22,16 +21,30 @@ class ApplicationTest {
     @Test
     fun generates_target() {
         Files.createFile(resolveSource())
-        if (Files.exists(resolveSource())) {
-            Files.createFile(resolveTarget())
-        }
+        run()
         assertTrue(doesTargetExist())
+    }
+
+    @Test
+    fun generates_correct_target(){
+        Files.createFile(resolveSource())
+        assertEquals(resolveTarget(), run())
+    }
+
+    private fun run(): Path? {
+        if (Files.exists(resolveSource())) {
+            val target = resolveTarget()
+            Files.createFile(target)
+            return target
+        }
+        return null
     }
 
     private fun resolveSource(): Path = working.resolve("Index.kt")
 
     @Test
     fun generates_no_target() {
+        run()
         assertFalse(doesTargetExist())
     }
 
