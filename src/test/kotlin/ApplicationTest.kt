@@ -19,6 +19,14 @@ class ApplicationTest {
     }
 
     @Test
+    fun generates_another_target() {
+        val name = "Another"
+        val otherSource = resolveSource(name)
+        Files.createFile(otherSource)
+        assertEquals(resolveTarget(name), run(otherSource))
+    }
+
+    @Test
     fun generates_target() {
         Files.createFile(resolveSource())
         run()
@@ -28,25 +36,29 @@ class ApplicationTest {
     @Test
     fun generates_correct_target() {
         Files.createFile(resolveSource())
-        assertEquals(resolveMagmaFile("Index"), run())
+        assertEquals(resolveTarget("Index"), run())
     }
 
     private fun run(): Path? {
         val source = resolveSource()
+        return run(source)
+    }
+
+    private fun run(source: Path): Path? {
         if (Files.exists(source)) {
             val nameCount = source.nameCount
             val lastIndex = nameCount - 1
             val lastValueWithSeparator = source.getName(lastIndex).toString()
             val separator = lastValueWithSeparator.indexOf('.')
             val lastValue = lastValueWithSeparator.substring(0, separator)
-            val target = resolveMagmaFile(lastValue)
+            val target = resolveTarget(lastValue)
             Files.createFile(target)
             return target
         }
         return null
     }
 
-    private fun resolveSource(): Path = working.resolve("Index.kt")
+    private fun resolveSource(name: String = "Index"): Path = working.resolve("$name.kt")
 
     @Test
     fun generates_no_target() {
@@ -54,7 +66,7 @@ class ApplicationTest {
         assertFalse(doesTargetExist())
     }
 
-    private fun doesTargetExist() = Files.exists(resolveMagmaFile("Index"))
+    private fun doesTargetExist() = Files.exists(resolveTarget("Index"))
 
-    private fun resolveMagmaFile(name: String): Path = working.resolve("$name.mgs")
+    private fun resolveTarget(name: String): Path = working.resolve("$name.mgs")
 }
